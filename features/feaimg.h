@@ -19,6 +19,8 @@ public:
 
     void getGistFeature(QString imgFile, std::vector<float> &gist);
 
+    void getLSD_VanishLine(QString imgFile, std::vector<float> &lsd, std::vector<float> &vanish);
+
     void getDirectionsOfLines(QString imgFile, std::vector<float> &lsd);
 
     void getVanishLine(QString imgFile, std::vector<float> &vanish);

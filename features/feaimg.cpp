@@ -152,6 +152,76 @@ void FeaImg::getGistFeature(QString imgFile, std::vector<float> &gist)
     src.release();
 }
 
+///
+/// \brief FeaImg::getLSD_VanishLine
+/// \param imgFile
+/// \param lsd
+/// \param vanish
+///
+///  this function extract the features of directions of lines as well as the vanish line features
+///  it is equals to call the getDirectionsOfLines and the getVanishLine.
+///
+///  To get the lsd and the vanish features, it is necessary to call the functions in the LineSegemntFea file.
+///  And in this way, we don't need to load the images twice to get these features.
+///
+///
+void FeaImg::getLSD_VanishLine(QString imgFile, std::vector<float> &lsd, std::vector<float> &vanish)
+{
+    // lsd feautres ..................................................
+    lsd.clear();
+    cv::Mat src = imread(imgFile.toStdString());
+    int NUM_Hist = 9;
+    // line segment detection
+    LineSegmentFea *lsf = new LineSegmentFea();
+
+    double thLength = 30;
+
+    lsf->initial(src, thLength);
+
+    std::vector<double> angleHist(NUM_Hist, 0);
+    double variance = 0.0;
+    double entropy = 0.0;
+    std::vector<double> clusterSize;
+
+    // direction with x axis
+    lsf->setHist_v_e(angleHist, variance, entropy);
+    lsf->setClusterSize(clusterSize);
+    for(int i=0;i<angleHist.size();i++)
+        lsd.push_back(angleHist[i]);
+    lsd.push_back(variance);
+    lsd.push_back(entropy);
+    for(int i=0;i<clusterSize.size();i++)
+        lsd.push_back(clusterSize[i]);
+
+    // vanish features .......................................................
+    vanish.clear();
+    std::vector<cv::Point2d> vps;
+    vps.clear();
+    lsf->setVanishPoints(vps);
+
+    std::vector<cv::Point2d> lines;
+    lines.clear();
+    lines.push_back(cv::Point2d(vps[1] - vps[0]));
+    lines.push_back(cv::Point2d(vps[2] - vps[1]));
+    lines.push_back(cv::Point2d(vps[0] - vps[2]));
+    cv::Point2d horizon(1.0,0.0);
+    double minVal = absDouble(getAngle(lines[0],horizon));
+    minVal = minVal < absDouble(getAngle(lines[1],horizon)) ? minVal : absDouble(getAngle(lines[1],horizon));
+    minVal = minVal < absDouble(getAngle(lines[2],horizon)) ? minVal : absDouble(getAngle(lines[2],horizon));
+    // the first element is the min angle with the horizontal line
+    vanish.push_back(minVal);
+
+    std::vector<double> angles;
+    angles.push_back(getAngle(cv::Point2d(-lines[0].x, -lines[0].y), lines[1]));
+    angles.push_back(getAngle(lines[0], cv::Point2d(-lines[2].x, -lines[2].y)));
+    angles.push_back(getAngle(cv::Point2d(-lines[1].x, -lines[1].y), lines[2]));
+    std::sort(angles.begin(),angles.end());
+
+    for(int i=0;i<angles.size();i++)
+        vanish.push_back(angles[i]);
+
+}
+
 void FeaImg::getDirectionsOfLines(QString imgFile, std::vector<float> &lsd)
 {
     lsd.clear();
@@ -195,7 +265,7 @@ void FeaImg::getDirectionsOfLines(QString imgFile, std::vector<float> &lsd)
         lsd.push_back(angleHist[i]);
 */
     src.release();
-}
+}   
 
 void FeaImg::getVanishLine(QString imgFile,
                            std::vector<float> &vanish)
@@ -220,7 +290,7 @@ void FeaImg::getVanishLine(QString imgFile,
     cv::Point2d horizon(1.0,0.0);
     double minVal = absDouble(getAngle(lines[0],horizon));
     minVal = minVal < absDouble(getAngle(lines[1],horizon)) ? minVal : absDouble(getAngle(lines[1],horizon));
-    minVal = minVal < absDouble(getAngle(lines[2],horizon)) ? minVal : absDouble(getangle(lines[2],horizon));
+    minVal = minVal < absDouble(getAngle(lines[2],horizon)) ? minVal : absDouble(getAngle(lines[2],horizon));
     // the first element is the min angle with the horizontal line
     vanish.push_back(minVal);
 

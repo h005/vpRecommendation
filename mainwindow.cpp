@@ -44,7 +44,7 @@ void MainWindow::on_importImgs_clicked()
 
     QStringList imgFiles = QFileDialog::getOpenFileNames(this,
                                              QString("Load images"),
-                                             QString("/home/hejw005/Documents/sumSang/imgs/"),
+                                             QString("/home/h005/Documents/sumSang/BrandenburgGate/imgs/"),
                                              QString("Image Files(*.jpg *.JPG *.png)"));
     imgSet->setImgFiles(imgFiles);
     imgSet->initialImgLabels();
