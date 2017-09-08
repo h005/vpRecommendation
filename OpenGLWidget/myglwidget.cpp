@@ -6,10 +6,10 @@ MyGLWidget::MyGLWidget(const QString &modelPath, QWidget *parent)
     this->modelPath = modelPath;
 }
 
-//void MyGLWidget::MyGLWidget()
-//{
+MyGLWidget::~MyGLWidget()
+{
 
-//}
+}
 
 void MyGLWidget::initializeGL()
 {

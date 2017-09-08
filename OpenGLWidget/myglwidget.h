@@ -6,7 +6,7 @@
 
 class MyGLWidget : public DragableWidget
 {
-//    Q_OBJECT
+    Q_OBJECT
 
 public:
 //    MyGLWidget();
