@@ -38,6 +38,8 @@ void ImgSet::setBackGround()
                                     Qt::KeepAspectRatio,
 //                                    Qt::IgnoreAspectRatio,
                                     Qt::SmoothTransformation));
+        qDebug() << "imgLabel size " << endl;
+        qDebug() << imgLabels[i]->size() << endl;
 //        QPalette palette = imgLabels[i]->palette();
 //        palette.setBrush(QPalette::Window,
 //                         QBrush(QPixmap(imgFiles[i]).scaled(

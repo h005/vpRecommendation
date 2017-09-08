@@ -26,6 +26,8 @@ private slots:
 
     void on_assess_clicked();
 
+    void on_importModel_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGridLayout *mainWidgetLayout;

@@ -24,8 +24,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
+    main.cpp \
+    mainwindow.cpp \
     imglabel.cpp \
     glwidget.cpp \
     imgset.cpp \
@@ -36,10 +36,13 @@ SOURCES += \
     features/lineSegmentFeature/linesegmentstart.cpp \
     features/gistFeature/gist.cpp \
     features/gistFeature/standalone_image.cpp \
-    features/gistFeature/libgist.cpp
+    features/gistFeature/libgist.cpp \
+    OpenGLWidget/dragablewidget.cpp \
+    OpenGLWidget/myglwidget.cpp \
+    OpenGLWidget/trackball.cpp \
 
 HEADERS += \
-        mainwindow.h \
+    mainwindow.h \
     imglabel.h \
     glwidget.h \
     imgset.h \
@@ -50,7 +53,11 @@ HEADERS += \
     features/gistFeature/gist.h \
     features/gistFeature/standalone_image.h \
     features/gistFeature/libgist.h \
-    features/gistFeature/clany/clany_defs.h
+    features/gistFeature/clany/clany_defs.h \
+    OpenGLWidget/dragablewidget.h \
+    OpenGLWidget/myglwidget.h \
+    OpenGLWidget/trackball.h \
+
 
 FORMS += \
         mainwindow.ui

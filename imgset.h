@@ -2,6 +2,7 @@
 #define IMGSET_H
 
 #include "imglabel.h"
+#include <QDebug>
 
 class ImgSet
 {
