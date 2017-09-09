@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // setup the imgSet
     imgSet = new ImgSet();
+    // setup the glWidget
+    myGLWidget = new MyGLWidget("");
 
     // set the short cuts
     ui->importImgs->setShortcut(Qt::Key_I);
@@ -38,8 +40,9 @@ void MainWindow::on_Quit_clicked()
 
 void MainWindow::setGLWidget()
 {
-    this->glWidget = new GLWidget();
-    mainWidgetLayout->addWidget(glWidget);
+    mainWidgetLayout->addWidget(myGLWidget);
+    ui->mainWidget->setLayout(mainWidgetLayout);
+    qDebug() << "set glWidget done" << endl;
 }
 
 void MainWindow::on_importImgs_clicked()
@@ -115,7 +118,7 @@ void MainWindow::on_importModel_clicked()
         statusBar()->showMessage("no selected model");
         return;
     }
-
+    statusBar()->showMessage(modelFile + " loaded");
 
     setGLWidget();
 }

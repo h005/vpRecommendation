@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include "imgset.h"
 #include "glwidget.h"
+#include "OpenGLWidget/myglwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -35,7 +36,8 @@ private:
 //    ImgLabel **imglabels;
 
     ImgSet *imgSet;
-    GLWidget *glWidget;
+//    GLWidget *glWidget;
+    MyGLWidget *myGLWidget;
 
     // setup UI
     void setImgLabels();

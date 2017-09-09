@@ -27,7 +27,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     imglabel.cpp \
-    glwidget.cpp \
+#    glwidget.cpp \
     imgset.cpp \
     features/feaimg.cpp \
     features/lineSegmentFeature/vpdetection.cpp \
@@ -40,11 +40,13 @@ SOURCES += \
     OpenGLWidget/dragablewidget.cpp \
     OpenGLWidget/myglwidget.cpp \
     OpenGLWidget/trackball.cpp \
+    RenderObject/mesh.cpp \
+#    RenderObject/gmodel.cpp
 
 HEADERS += \
     mainwindow.h \
     imglabel.h \
-    glwidget.h \
+#    glwidget.h \
     imgset.h \
     features/feaimg.h \
     features/lineSegmentFeature/vpdetection.h \
@@ -57,6 +59,13 @@ HEADERS += \
     OpenGLWidget/dragablewidget.h \
     OpenGLWidget/myglwidget.h \
     OpenGLWidget/trackball.h \
+    RenderObject/mesh.h \
+#    RenderObject/gmodel.h
+
+DISTFILES += \
+    shader/simple.vert \
+    shader/simple.frag
+
 
 
 FORMS += \
@@ -65,6 +74,9 @@ FORMS += \
 # fftw3
 LIBS += -L/usr/local/lib/ \
         -lfftw3f
+
+# assimp
+LIBS += -lassimp
 
 # opencv
 INCLUDEPATH += /usr/local/include \
@@ -114,3 +126,6 @@ LIBS += /usr/local/lib/libopencv_aruco.so.3.2 \
         /usr/local/lib/libopencv_ximgproc.so.3.2 \
         /usr/local/lib/libopencv_xobjdetect.so.3.2 \
         /usr/local/lib/libopencv_xphoto.so.3.2
+
+RESOURCES += \
+    shaders.qrc
