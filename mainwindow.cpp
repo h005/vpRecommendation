@@ -11,9 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // set the background color
-    setStyleSheet("background-color:rgb(225,255,255);");
-//    setStyleSheet("background-color:rgb(0,0,0);");
+//    setStyleSheet("background-color:rgb(225,255,255);");
+    setStyleSheet("background-color:rgb(75,75,75);");
 
+    setUpBtnStyle();
     // mainWidgetLayout Setup
     mainWidgetLayout = new QGridLayout();
     mainWidgetLayout->setSpacing(10);
@@ -185,4 +186,15 @@ void MainWindow::viewpointQualityAssessment()
     vpSet->setRecommendationLocations(score);
     delete predictor;
 
+}
+
+void MainWindow::setUpBtnStyle()
+{
+    ui->importImgs->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->assess->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->Quit->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->importModel->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->recommend->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->assessModel->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->SfM->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
 }

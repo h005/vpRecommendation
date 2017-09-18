@@ -40,6 +40,8 @@ private:
 
     void viewpointQualityAssessment();
 
+    void setUpBtnStyle();
+
 private:
     Ui::MainWindow *ui;
     QGridLayout *mainWidgetLayout;
