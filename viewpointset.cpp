@@ -9,7 +9,7 @@ ViewPointSet::ViewPointSet()
     sceneZ = -1.0;
     N_sample = 500;
     feaGeo = NULL;
-    m_features = 27;
+    m_features = 18;
     geoFeatures.create(N_sample,m_features,CV_64FC1);
 }
 
@@ -23,9 +23,12 @@ void ViewPointSet::setFeatures(GLWidget *glWidget)
 {
     setViewpoints();
     setGLWidget(glWidget);
-//    feaGeo->
-    feaGeo->vpRecommendPipLine(mvList, cameraPos, sceneZ);
-    feaGeo->extractFeatures();
+    feaGeo->vpRecommendPipLine(mvList, geoFeatures);
+}
+
+void ViewPointSet::copyGeoFeatureTo(cv::Mat &geoFea)
+{
+    geoFeatures.copyTo(geoFea);
 }
 
 std::vector<glm::vec2> &ViewPointSet::getCameraPos()
@@ -40,7 +43,7 @@ void ViewPointSet::setGLWidget(GLWidget *glWidget)
 
 void ViewPointSet::genMVMatrix(std::vector<glm::mat4> &mvList)
 {
-    std::cout << "vppoint sample sceneZ " << sceneZ << std::endl;
+//    std::cout << "vppoint sample sceneZ " << sceneZ << std::endl;
     for(int i=0;i<cameraPos.size();i++)
     {
         glm::mat4 mv = glm::lookAt(glm::vec3(cameraPos[i].x, cameraPos[i].y, sceneZ),
@@ -54,8 +57,8 @@ void ViewPointSet::camPosSample()
 {
     srand((int)time(0));
 
-    glm::vec2 xRange(-3.0, 3.0);
-    glm::vec2 yRange(-3.0, -1.5);
+    glm::vec2 xRange(-1.5, 1.5);
+    glm::vec2 yRange(-3.0, -0.8);
 
     int counter = N_sample;
     while(counter--)
@@ -76,4 +79,24 @@ void ViewPointSet::fillInFeature(int index)
 float ViewPointSet::getSceneZ()
 {
     return sceneZ;
+}
+
+void ViewPointSet::setRecommendationLocations(cv::Mat &score)
+{
+    cv::Mat indexScore;
+    cv::sortIdx(score, indexScore, CV_SORT_EVERY_COLUMN + CV_SORT_DESCENDING);
+    double topRate = 0.2;
+    int numsCamera = topRate * score.rows;
+    std::vector<int> index;
+    for(int i=0; i < numsCamera; i++)
+        index.push_back(indexScore.at<int>(i,0));
+    feaGeo->setRecommendationLocations(cameraPos, sceneZ, index);
+//    for(int i=0;i<score.rows;i++)
+//        std::cout << score.at<double>(i,0) << " " << indexScore.at<int>(i,0) << std::endl;
+}
+
+void ViewPointSet::printScore(cv::Mat &score)
+{
+    for(int i=0;i<score.rows;i++)
+        std::cout << "vp " << i << " " << score.at<double>(i,0) << std::endl;
 }

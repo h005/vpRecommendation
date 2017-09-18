@@ -7,24 +7,23 @@ FeaGeo::FeaGeo(GLWidget *glWidget)
 }
 
 void FeaGeo::vpRecommendPipLine(std::vector<glm::mat4> &cameraList,
-                                std::vector<glm::vec2> &camPos,
-                                float &sceneZ)
+                                cv::Mat &geoFeature)
 {
     glm::mat4 originalMV = glWidget->getOriginalMatrix();
-    glWidget->setVpRcameraLocations(camPos, sceneZ);
 
     for(int i=0;i<cameraList.size();i++)
     {
         initial(cameraList[i] * originalMV, glWidget->getProjMatrix());
-//        std::cout << "vpRecommendation .... " << i << std::endl;
+        if(!(i % 100))
+            std::cout << "vpRecommendation .... " << i << std::endl;
 //        std::cout << glm::to_string(cameraList[i]) << std::endl;
         render();
         setImgMask(img,mask);
         setParameters();
         extractFeatures();
-        std::cout << "geofea size " << fea.size() << std::endl;
-        std::cout << "vpRecommendation " << i << std::endl;
-//        fillInFeature(i);
+//        std::cout << "geofea size " << fea.size() << std::endl;
+//        std::cout << "vpRecommendation " << i << std::endl;
+        fillInFeature(geoFeature,i);
     }
 }
 
@@ -33,7 +32,14 @@ void FeaGeo::initial(glm::mat4 modelView, glm::mat4 projection)
     this->modelView = modelView;
     this->projection = projection;
     glWidget->setVpRecommendationMatrix(modelView);
-//    std::cout << modelview.
+    //    std::cout << modelview.
+}
+
+void FeaGeo::setRecommendationLocations(std::vector<glm::vec2> &vpRcameraLocations,
+                                        float sceneZ,
+                                        std::vector<int> &index)
+{
+    glWidget->setRecommendationLocations(vpRcameraLocations, sceneZ, index);
 }
 
 void FeaGeo::render()

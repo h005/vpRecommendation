@@ -73,7 +73,9 @@ public:
 
     void setVpRecommendationMatrix(glm::mat4 &vpRecommendationMatrix);
 
-    void setVpRcameraLocations(std::vector<glm::vec2> &vpRcameraLocations, float sceneZ);
+    void setRecommendationLocations(std::vector<glm::vec2> &vpRcameraLocations,
+                                    float sceneZ,
+                                    std::vector<int> &index);
     void clearVpRcameraLocations();
 
 //    glm::mat4 getMMatrix();

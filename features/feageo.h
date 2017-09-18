@@ -32,18 +32,19 @@ class FeaGeo
 public:
     FeaGeo(GLWidget *glWidget);
 
-    void vpRecommendPipLine(std::vector<glm::mat4> &cameraList, std::vector<glm::vec2> &camPos, float &sceneZ);
+    void vpRecommendPipLine(std::vector<glm::mat4> &cameraList, cv::Mat &geoFeature);
 
     // fill in the modelView and projection matrix
     void initial(glm::mat4 modelView, glm::mat4 projection);
+    void setRecommendationLocations(std::vector<glm::vec2> &vpRcameraLocations,
+                                    float sceneZ,
+                                    std::vector<int> &index);
     // render the image
     void render();
     void setImgMask(cv::Mat &img, cv::Mat &mask);
     void setParameters();
     void extractFeatures();
-
     void extractFeaturesPipline();
-
     void fillInFeature(cv::Mat &features, int index);
 
 private:

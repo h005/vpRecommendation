@@ -37,9 +37,15 @@ public:
 
     void setFeatures(GLWidget *glWidget);
 
+    void copyGeoFeatureTo(cv::Mat &geoFea);
+
     std::vector<glm::vec2>& getCameraPos();
 
     float getSceneZ();
+
+    void setRecommendationLocations(cv::Mat &score);
+
+    void printScore(cv::Mat &score);
 
 private:
     void setGLWidget(GLWidget *glWidget);

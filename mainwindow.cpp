@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // set the background color
     setStyleSheet("background-color:rgb(225,255,255);");
+//    setStyleSheet("background-color:rgb(0,0,0);");
 
     // mainWidgetLayout Setup
     mainWidgetLayout = new QGridLayout();
@@ -108,14 +109,15 @@ void MainWindow::setImgLabels()
 
 void MainWindow::on_assess_clicked()
 {
-//    qDebug() << "imgLabel size " << imgSet->imgLabelSize() << endl;
-    imgSet->setFeatures();
-    Predictor *predictor = new Predictor();
-    // set img features ie 2D features ie XTest1
-    predictor->setImgFeatures(imgSet);
-    cv::Mat label;
-    predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
-    imgSet->printLabel(label);
+    imageQualityAssessment();
+////    qDebug() << "imgLabel size " << imgSet->imgLabelSize() << endl;
+//    imgSet->setFeatures();
+//    Predictor *predictor = new Predictor();
+//    // set img features ie 2D features ie XTest1
+//    predictor->setImgFeatures(imgSet);
+//    cv::Mat label;
+//    predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
+//    imgSet->printLabel(label);
 }
 
 void MainWindow::on_importModel_clicked()
@@ -151,6 +153,7 @@ void MainWindow::on_recommend_clicked()
     if(!feaGeo)
         feaGeo = new FeaGeo(this->glWidget);
 //    feaGeo->vpRecommendPipLine();
+    viewpointQualityAssessment();
 }
 
 void MainWindow::on_assessModel_clicked()
@@ -173,13 +176,13 @@ void MainWindow::imageQualityAssessment()
 
 void MainWindow::viewpointQualityAssessment()
 {
-//    vpSet->setFeatures(glWidget);
-//    Predictor *predictor = new Predictor();
-//    // set geo features ie 3D features ie XTest2
-//    predictor->setGeoFeatures(vpSet);
-//    cv::Mat score;
-//    predictor->predictScoreWithViewId(score, Predictor::ViewId_Geo);
-//    vpSet->printScore(score);
-//    delete predictor;
+    vpSet->setFeatures(glWidget);
+    Predictor *predictor = new Predictor();
+    // set geo features ie 3D features ie XTest2
+    predictor->setGeoFeatures(vpSet);
+    cv::Mat score;
+    predictor->predictScoreWithViewId(score, Predictor::ViewId_Geo);
+    vpSet->setRecommendationLocations(score);
+    delete predictor;
 
 }

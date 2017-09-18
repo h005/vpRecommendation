@@ -4,6 +4,7 @@
 #include <opencv.hpp>
 #include "imgset.h"
 #include "features/feageo.h"
+#include "viewpointset.h"
 
 class QString;
 
@@ -17,7 +18,7 @@ public:
     Predictor(cv::Mat XTest1, cv::Mat XTest2);
 
     void setImgFeatures(ImgSet *imgset);
-    void setGeoFeatures();
+    void setGeoFeatures(ViewPointSet *vpset);
 
     void predictScoreWithViewId(cv::Mat &score, int viewId);
     void predictLabelWithViewId(cv::Mat &label, int viewId);

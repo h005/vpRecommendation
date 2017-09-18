@@ -168,14 +168,13 @@ void GLWidget::paintGL()
 //    std::vector<glm::vec3> &points = m_relation->getModelPoints();
 
     if (vpRcameraLocations.size() > 0) {
-        std::cout << "vpRcameraLocations " << vpRcameraLocations.size() << std::endl;
         glUseProgram(m_sphereProgramID);
 
         std::vector<glm::vec3>::iterator it;
         for (it = vpRcameraLocations.begin(); it != vpRcameraLocations.end(); it++) {
             // multiple point's position
             glm::mat4 pointMV = glm::translate(modelViewMatrix, *it);
-            pointMV = glm::scale(pointMV, glm::vec3(0.15 / m_scaleBeforeRender));
+            pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
             cameraModel.draw(pointMV, m_proj);
         }
     }
@@ -387,15 +386,16 @@ void GLWidget::setVpRecommendationMatrix(glm::mat4 &vpRecommendationMatrix)
     this->vpRecommendationMatrix = vpRecommendationMatrix;
 }
 
-void GLWidget::setVpRcameraLocations(std::vector<glm::vec2> &vpRcameraLocations, float sceneZ)
+void GLWidget::setRecommendationLocations(std::vector<glm::vec2> &vpRcameraLocations,
+                                          float sceneZ,
+                                          std::vector<int> &index)
 {
     glm::mat4 shift_scale = getOriginalMatrix();
 //    this->vpRcameraLocations = vpRcameraLocations;
-    for(int i=0;i<vpRcameraLocations.size();i++)
+    for(int i=0;i<index.size();i++)
     {
-        glm::vec4 pos(vpRcameraLocations[i].x,vpRcameraLocations[i].y,sceneZ,1.0);
+        glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,sceneZ,1.0);
         pos = glm::inverse(shift_scale) * pos;
-        std::cout << "setVpRcameraLocations " << i << " " << glm::to_string(pos) << std::endl;
         this->vpRcameraLocations.push_back(glm::vec3(pos.x, pos.y, pos.z));
     }
 }

@@ -27,6 +27,12 @@ void Predictor::setImgFeatures(ImgSet *imgset)
     feaNormalization(XTest1, imgFeaScale);
 }
 
+void Predictor::setGeoFeatures(ViewPointSet *vpset)
+{
+    vpset->copyGeoFeatureTo(XTest2);
+    feaNormalization(XTest2, geoFeaScale);
+}
+
 void Predictor::predictLabel(cv::Mat &label, int viewId)
 {
     assert(!(XTest1.rows % 2));
@@ -53,16 +59,16 @@ void Predictor::feaNormalization(cv::Mat &fea, cv::Mat& scalePara)
     for(int i=0;i<fea.rows;i++)
         for(int j=0;j<fea.cols;j++)
         {
-            std::cout << scalePara.at<double>(j,0) << " "
-                      << scalePara.at<double>(j,1) << " "
-                      << scalePara.at<double>(j,2) << " "
-                      << scalePara.at<double>(j,3) << " "
-                      << fea.at<double>(i,j) << std::endl;
+//            std::cout << scalePara.at<double>(j,0) << " "
+//                      << scalePara.at<double>(j,1) << " "
+//                      << scalePara.at<double>(j,2) << " "
+//                      << scalePara.at<double>(j,3) << " "
+//                      << fea.at<double>(i,j) << std::endl;
             fea.at<double>(i,j) = (scalePara.at<double>(j,3) - scalePara.at<double>(j,2)) \
                     * (fea.at<double>(i,j) - scalePara.at<double>(j,0)) \
                     / (scalePara.at<double>(j,1) - scalePara.at<double>(j,0)) \
                     + scalePara.at<double>(j,2);
-            std::cout << fea.at<double>(i,j) << std::endl;
+//            std::cout << fea.at<double>(i,j) << std::endl;
         }
 }
 
@@ -125,6 +131,7 @@ void Predictor::predictScore(cv::Mat &score, int viewId)
         score2.release();
         break;
     }
+    sigmod(score);
 
 
 
@@ -149,6 +156,8 @@ void Predictor::predictCoreFunction(const cv::Mat &XTest,
     cv::transpose(XTrain, XTrain_transpose);
 
     double dim = (double)XTrain.cols;
+//    std::cout << "XTest size " << XTest.rows << " " << XTest.cols << std::endl;
+//    std::cout << "XTrain size " << XTrain.rows << " " << XTrain.cols << std::endl;
     cv::Mat TK = XTest * XTrain_transpose;
 //    std::cout << "TK " << TK.rows << " " << TK.cols << std::endl;
     double sigma = xsigma * dim;
@@ -269,10 +278,11 @@ void Predictor::fillData()
 //    bam = -0.2068;
 //    bbm = -1.3079;
 
+    // sep 0918
     bam = -0.2450;
     bbm = -1.1504;
 
-    std::cout << "XTrain " << XTrain2.cols << std::endl;
+//    std::cout << "XTrain " << XTrain2.cols << std::endl;
 }
 
 void Predictor::fillMatrix(QString fileName, cv::Mat &Data)
