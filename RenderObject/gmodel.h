@@ -12,6 +12,7 @@
 #include "assimp/LogStream.hpp"
 
 #include <QOpenGLWidget>
+#include <QOpenGLFunctions>
 
 typedef std::map<std::string, GLuint *> TextureIdMapType;
 

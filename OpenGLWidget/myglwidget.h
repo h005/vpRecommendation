@@ -3,7 +3,7 @@
 
 #include "OpenGLWidget/dragablewidget.h"
 #include "RenderObject/mesh.h"
-#include "RenderObject/gmodel.h"
+//#include "RenderObject/gmodel.h"
 #include <glm/glm.hpp>
 
 //#include "GModel/

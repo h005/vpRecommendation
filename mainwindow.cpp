@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "svm2k/predictor.h"
 
 #include <QDebug>
 
@@ -19,11 +20,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // setup the imgSet
     imgSet = new ImgSet();
-    // setup the glWidget
-    myGLWidget = new MyGLWidget("");
+    // setup the vpSet
+    vpSet = new ViewPointSet();
 
-    // set the short cuts
+    glWidget = NULL;
+
+    // set the short cut
+    // std::cout << "svm2k fill data"
     ui->importImgs->setShortcut(Qt::Key_I);
+
+    // set feaGeo to NULL pointer
+    feaGeo = NULL;
 }
 
 MainWindow::~MainWindow()
@@ -40,7 +47,8 @@ void MainWindow::on_Quit_clicked()
 
 void MainWindow::setGLWidget()
 {
-    mainWidgetLayout->addWidget(myGLWidget);
+//    mainWidgetLayout->addWidget(myGLWidget);
+    mainWidgetLayout->addWidget(glWidget);
     ui->mainWidget->setLayout(mainWidgetLayout);
     qDebug() << "set glWidget done" << endl;
 }
@@ -51,7 +59,7 @@ void MainWindow::on_importImgs_clicked()
     QStringList imgFiles = QFileDialog::getOpenFileNames(this,
                                              QString("Load images"),
                                              QString("/home/hejw005/Documents/learning/QtProject/vpRecommendation/data/imgs/"),
-                                             QString("Image Files(*.jpg *.JPG *.png)"));
+                                             QString("Image Files(*.jpg *.jpeg *.JPG *.JPEG *.png)"));
     imgSet->setImgFiles(imgFiles);
     imgSet->initialImgLabels();
 
@@ -102,6 +110,12 @@ void MainWindow::on_assess_clicked()
 {
 //    qDebug() << "imgLabel size " << imgSet->imgLabelSize() << endl;
     imgSet->setFeatures();
+    Predictor *predictor = new Predictor();
+    // set img features ie 2D features ie XTest1
+    predictor->setImgFeatures(imgSet);
+    cv::Mat label;
+    predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
+    imgSet->printLabel(label);
 }
 
 void MainWindow::on_importModel_clicked()
@@ -120,5 +134,52 @@ void MainWindow::on_importModel_clicked()
     }
     statusBar()->showMessage(modelFile + " loaded");
 
+    glWidget = new GLWidget(modelFile);
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    format.setVersion(3, 2);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    glWidget->setFormat(format);
     setGLWidget();
+}
+
+void MainWindow::on_recommend_clicked()
+{
+//    feaGeo = new FeaGeo(this->glWidget);
+//    feaGeo->extractFeaturesPipline();
+    if(!feaGeo)
+        feaGeo = new FeaGeo(this->glWidget);
+//    feaGeo->vpRecommendPipLine();
+}
+
+void MainWindow::on_assessModel_clicked()
+{
+    feaGeo = new FeaGeo(this->glWidget);
+    feaGeo->extractFeaturesPipline();
+}
+
+void MainWindow::imageQualityAssessment()
+{
+    imgSet->setFeatures();
+    Predictor *predictor = new Predictor();
+    // set img features ie 2D features ie XTest1
+    predictor->setImgFeatures(imgSet);
+    cv::Mat label;
+    predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
+    imgSet->printLabel(label);
+    delete predictor;
+}
+
+void MainWindow::viewpointQualityAssessment()
+{
+//    vpSet->setFeatures(glWidget);
+//    Predictor *predictor = new Predictor();
+//    // set geo features ie 3D features ie XTest2
+//    predictor->setGeoFeatures(vpSet);
+//    cv::Mat score;
+//    predictor->predictScoreWithViewId(score, Predictor::ViewId_Geo);
+//    vpSet->printScore(score);
+//    delete predictor;
+
 }

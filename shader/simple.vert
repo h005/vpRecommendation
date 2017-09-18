@@ -1,4 +1,4 @@
-attribute vec4 a_position;
+attribute vec3 a_position;
 attribute vec3 a_normal;
 
 uniform mat4 mvp_matrix;
@@ -13,9 +13,10 @@ varying vec4 col;
 
 void main(void)
 {
-    gl_Position = mvp_matrix * a_position;
+    gl_Position = mvp_matrix * vec4(a_position, 1.0f);
 
     vertex = a_position;
     vertexNormal = a_normal;
-    col = vec4(objectColor.x, objectColor.y, objectColor.z, 1);
+//    col = vec4(objectColor.x, objectColor.y, objectColor.z, 1.0f);
+    col = gl_Position;
 }

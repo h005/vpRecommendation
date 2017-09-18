@@ -11,9 +11,31 @@ FeaImg::FeaImg()
 
 }
 
-void FeaImg::getRuleOfThirds(QString imgFile, float &res)
+FeaImg::FeaImg(QString imgFile)
 {
-    res = 100000.0;
+    img = cv::imread(imgFile.toStdString());
+}
+
+void FeaImg::setFeatures()
+{
+//    setRuleOfThirds();
+    setHogFeature();
+    setLSD_VanishLine();
+    setGistFeature();
+}
+
+void FeaImg::fillInMat(Mat &featureMat, int index)
+{
+    for(int i=0;i<fea.size();i++)
+    {
+        assert(!std::isinf(fea[i]));
+        featureMat.at<double>(index,i) = fea[i];
+    }
+}
+
+void FeaImg::setRuleOfThirds()
+{
+    float res = 100000.0;
     double centroidRow = 0;
     double centroidCol = 0;
 //    setCentroid();
@@ -28,13 +50,13 @@ void FeaImg::getRuleOfThirds(QString imgFile, float &res)
     }
 
     cv::Mat binaryMap;
-    cv::Mat src = cv::imread(imgFile.toStdString());
-    cv::resize(src,src,cv::Size(480,320));
+//    cv::Mat src = cv::imread(imgFile.toStdString());
+//    cv::resize(src,src,cv::Size(480,320));
 
     if(algorithm[0].find("SPECTRAL_RESIDUAL") == 0)
     {
         cv::Mat saliencyMap;
-        if(saliencyAlgorithm->computeSaliency(src, saliencyMap))
+        if(saliencyAlgorithm->computeSaliency(img, saliencyMap))
         {
             StaticSaliencySpectralResidual spec;
             spec.computeBinaryMap(saliencyMap, binaryMap);
@@ -66,6 +88,7 @@ void FeaImg::getRuleOfThirds(QString imgFile, float &res)
         cout << "***Error in the instantiation of the saliency algorithm...***\n";
         return ;
     }
+    fea.push_back(res);
 }
 
 ///
@@ -115,11 +138,13 @@ void FeaImg::setCentroid(double &centroidRow, double &centroidCol, cv::Mat &mask
 }
 
 
-void FeaImg::getHogFeature(QString imgFile, std::vector<float> &hog)
+void FeaImg::setHogFeature()
 {
+    std::vector<float> hog;
     hog.clear();
-    cv::Mat src = cv::imread(imgFile.toStdString());
-    cv::cvtColor(src,src,CV_BGR2GRAY);
+//    cv::Mat src = cv::imread(imgFile.toStdString());
+    cv::Mat src;
+    cv::cvtColor(img,src,CV_BGR2GRAY);
     int NUMbins = 9;
     hog.resize(9,0);
     cv::resize(src,src,cv::Size(16,16));
@@ -134,22 +159,24 @@ void FeaImg::getHogFeature(QString imgFile, std::vector<float> &hog)
 
     for(int i=0;i<descriptorsValues.size();i++)
         hog[i % NUMbins] += descriptorsValues[i];
-
+    for(int i=0;i<hog.size();i++)
+        fea.push_back(hog[i]);
+    src.release();
 }
 
-void FeaImg::getGistFeature(QString imgFile, std::vector<float> &gist)
+void FeaImg::setGistFeature()
 {
+    std::vector<float> gist;
     const cls::GISTParams DEFAULT_PARAMS {true, 32, 32, 4, 3, {8, 8, 4}};
-    cv::Mat src = cv::imread(imgFile.toStdString());
-    if (src.empty())
+    if (img.empty())
     {
         std::cerr << "No input image!" << std::endl;
         exit(1);
     }
-    vector<float> result;
     cls::GIST gist_ext(DEFAULT_PARAMS);
-    gist_ext.extract(src, result);
-    src.release();
+    gist_ext.extract(img, gist);
+    for(int i=0;i<gist.size();i++)
+        fea.push_back(gist[i]);
 }
 
 ///
@@ -165,18 +192,20 @@ void FeaImg::getGistFeature(QString imgFile, std::vector<float> &gist)
 ///  And in this way, we don't need to load the images twice to get these features.
 ///
 ///
-void FeaImg::getLSD_VanishLine(QString imgFile, std::vector<float> &lsd, std::vector<float> &vanish)
+void FeaImg::setLSD_VanishLine()
 {
+    std::vector<float> lsd;
+    std::vector<float> vanish;
     // lsd feautres ..................................................
     lsd.clear();
-    cv::Mat src = imread(imgFile.toStdString());
+//    cv::Mat src = imread(imgFile.toStdString());
     int NUM_Hist = 9;
     // line segment detection
     LineSegmentFea *lsf = new LineSegmentFea();
 
     double thLength = 30;
 
-    lsf->initial(src, thLength);
+    lsf->initial(img, thLength);
 
     std::vector<double> angleHist(NUM_Hist, 0);
     double variance = 0.0;
@@ -186,12 +215,25 @@ void FeaImg::getLSD_VanishLine(QString imgFile, std::vector<float> &lsd, std::ve
     // direction with x axis
     lsf->setHist_v_e(angleHist, variance, entropy);
     lsf->setClusterSize(clusterSize);
+
+    // angleHist
     for(int i=0;i<angleHist.size();i++)
         lsd.push_back(angleHist[i]);
+    // clusterSize
+    double sumClusterSize = 0.0;
+    for(int i=0;i<clusterSize.size();i++)
+        sumClusterSize += clusterSize[i];
+    if(sumClusterSize)
+        for(int i=0;i<clusterSize.size();i++)
+            lsd.push_back(clusterSize[i] / sumClusterSize);
+    else
+        for(int i=0;i<clusterSize.size();i++)
+            lsd.push_back(clusterSize[i]);
+    // variance entropy
     lsd.push_back(variance);
     lsd.push_back(entropy);
-    for(int i=0;i<clusterSize.size();i++)
-        lsd.push_back(clusterSize[i]);
+//    for(int i=0;i<clusterSize.size();i++)
+//        lsd.push_back(clusterSize[i]);
 
     // vanish features .......................................................
     vanish.clear();
@@ -209,7 +251,7 @@ void FeaImg::getLSD_VanishLine(QString imgFile, std::vector<float> &lsd, std::ve
     minVal = minVal < absDouble(getAngle(lines[1],horizon)) ? minVal : absDouble(getAngle(lines[1],horizon));
     minVal = minVal < absDouble(getAngle(lines[2],horizon)) ? minVal : absDouble(getAngle(lines[2],horizon));
     // the first element is the min angle with the horizontal line
-    vanish.push_back(minVal);
+//    vanish.push_back(minVal);
 
     std::vector<double> angles;
     angles.push_back(getAngle(cv::Point2d(-lines[0].x, -lines[0].y), lines[1]));
@@ -217,11 +259,27 @@ void FeaImg::getLSD_VanishLine(QString imgFile, std::vector<float> &lsd, std::ve
     angles.push_back(getAngle(cv::Point2d(-lines[1].x, -lines[1].y), lines[2]));
     std::sort(angles.begin(),angles.end());
 
-    for(int i=0;i<angles.size();i++)
-        vanish.push_back(angles[i]);
+//    for(int i=0;i<angles.size();i++)
+//        vanish.push_back(angles[i]);
+    vanish.push_back(angles[0]);
+    vanish.push_back(angles[2]);
 
+    double var = 0.0;
+    double meanVal = 0.0;
+    for(int i=0;i<angles.size();i++)
+        meanVal += angles[i];
+    meanVal /= angles.size();
+    for(int i=0;i<angles.size();i++)
+        var = var + (angles[i] - meanVal) * (angles[i] - meanVal);
+    var /= angles.size();
+    vanish.push_back(var);
+    for(int i=0;i<lsd.size();i++)
+        fea.push_back(lsd[i]);
+    for(int i=0;i<vanish.size();i++)
+        fea.push_back(vanish[i]);
 }
 
+/*
 void FeaImg::getDirectionsOfLines(QString imgFile, std::vector<float> &lsd)
 {
     lsd.clear();
@@ -263,10 +321,12 @@ void FeaImg::getDirectionsOfLines(QString imgFile, std::vector<float> &lsd)
     lsf->setHist_diagonal(angleHist,"lu2rb");
     for(int i=0;i<angleHist.size();i++)
         lsd.push_back(angleHist[i]);
-*/
+
     src.release();
 }   
+*/
 
+/*
 void FeaImg::getVanishLine(QString imgFile,
                            std::vector<float> &vanish)
 {
@@ -304,6 +364,7 @@ void FeaImg::getVanishLine(QString imgFile,
         vanish.push_back(angles[i]);
 
 }
+*/
 
 double FeaImg::getAngle(cv::Point2d u, cv::Point2d v)
 {

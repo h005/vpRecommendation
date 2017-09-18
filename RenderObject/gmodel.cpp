@@ -230,7 +230,7 @@ bool GModel::load(const char *modelPath) {
 void GModel::bindDataToGL() {
     // 读入shader程序并编译
     // 需要在OpenGL环境下调用，放在这里合适
-    m_programID = LoadShaders( "shader/simpleShader.vert", "shader/simpleShader.frag" );
+//    m_programID = LoadShaders( "shader/simpleShader.vert", "shader/simpleShader.frag" );
 
     // 1.将纹理读取到显存
     // 2.递归创建meshEntry
@@ -250,28 +250,28 @@ void GModel::bindDataToGL() {
 
     size_t numTextures = textureIdMap.size();
     textureIds = new GLuint[numTextures];
-    glGenTextures(numTextures, textureIds);
+    QOpenGLFunctions::glGenTextures(numTextures, textureIds);
     TextureIdMapType::iterator it;
     int i;
     for (i = 0, it = textureIdMap.begin(); it != textureIdMap.end(); it++, i++) {
         std::string filename = basePath + it->first;
 
-        glBindTexture(GL_TEXTURE_2D, textureIds[i]); /* Binding of texture name */
+        QOpenGLFunctions::glBindTexture(GL_TEXTURE_2D, textureIds[i]); /* Binding of texture name */
         //redefine standard texture values
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear
+        QOpenGLFunctions::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear
                                                                           interpolation for magnification filter */
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear
+        QOpenGLFunctions::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear
                                                                           interpolation for minifying filter */
 
         int width, height;
         // 读入数据是b,g,r依次排列的
         void *data = imgData(filename.c_str(), width, height);
         if (data) {
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            QOpenGLFunctions::glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             // https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml
             // 参数中的第一个GL_RGB表示，数据有三个通道
             // 第二个GL_BGR表示数据是b,g,r排列的，它会将bgr分别放在显存中的bgr分量上，方便shader使用
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width,
+            QOpenGLFunctions::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width,
                 height, 0, GL_BGR, GL_UNSIGNED_BYTE,
                 data); /* Texture specification */
             delete data;
@@ -287,13 +287,14 @@ void GModel::draw(const glm::mat4 &inheritModelView, const glm::mat4 &projection
     assert(scene != NULL);
     glPushAttrib(GL_ENABLE_BIT);
 
-    glEnable(GL_TEXTURE_2D);
+    QOpenGLFunctions::glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
     // 传入的变换已经含有移中和缩放了
     glm::mat4 transformation = inheritModelView;
 
     // 绑定使用的shader并设置其中的投影矩阵
+//    QOpenGLFunctions::glUseProgram(m_programID);
     glUseProgram(m_programID);
     GLuint projMatrixID = glGetUniformLocation(m_programID, "projMatrix");
     GLuint mvMatrixID = glGetUniformLocation(m_programID, "mvMatrix");
@@ -315,7 +316,7 @@ void GModel::draw(const glm::mat4 &inheritModelView, const glm::mat4 &projection
 
         const aiMesh *mesh = (*it)->mesh;
         // 一个aiMesh拥有一致的纹理和材质
-        glActiveTexture(GL_TEXTURE0);
+        QOpenGLFunctions::glActiveTexture(GL_TEXTURE0);
 
         // 应用材质或环境光
         {
@@ -328,10 +329,10 @@ void GModel::draw(const glm::mat4 &inheritModelView, const glm::mat4 &projection
             {
                 //bind texture
                 texId = *textureIdMap[texPath.data];
-                glBindTexture(GL_TEXTURE_2D, texId);
+                QOpenGLFunctions::glBindTexture(GL_TEXTURE_2D, texId);
             }
-            glBindTexture(GL_TEXTURE_2D, texId);
-            glUniform1i(TextureID, GL_TEXTURE0);
+            QOpenGLFunctions::glBindTexture(GL_TEXTURE_2D, texId);
+            QOpenGLFunctions::glUniform1i(TextureID, GL_TEXTURE0);
 
 
             glm::vec4 c(0.f);
@@ -340,7 +341,7 @@ void GModel::draw(const glm::mat4 &inheritModelView, const glm::mat4 &projection
                  if (texId == 0 && AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
                      color4_to_float4(&diffuse, glm::value_ptr(c));
             }
-            glUniform4fv(diffuseID, 1, glm::value_ptr(c));
+            QOpenGLFunctions::glUniform4fv(diffuseID, 1, glm::value_ptr(c));
         }
 //        std::cout << "has vertex Color "<< mesh->HasVertexColors(55) << std::endl;
         // 为每个顶点加入颜色

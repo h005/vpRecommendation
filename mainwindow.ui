@@ -62,7 +62,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="assessModel">
+        <property name="text">
+         <string>Assess</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="recommend">
         <property name="text">
          <string>Recommend</string>
         </property>

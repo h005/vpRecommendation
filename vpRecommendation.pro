@@ -27,7 +27,6 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     imglabel.cpp \
-#    glwidget.cpp \
     imgset.cpp \
     features/feaimg.cpp \
     features/lineSegmentFeature/vpdetection.cpp \
@@ -40,13 +39,20 @@ SOURCES += \
     OpenGLWidget/dragablewidget.cpp \
     OpenGLWidget/myglwidget.cpp \
     OpenGLWidget/trackball.cpp \
+    OpenGLWidget/glwidget.cpp \
+    OpenGLWidget/shader.cpp \
     RenderObject/mesh.cpp \
-#    RenderObject/gmodel.cpp
+    RenderObject/GModel.cpp \
+    RenderObject/sphere.cpp \
+    RenderObject/baserenderobject.cpp \
+    RenderObject/pointsmatchrelation.cpp \
+    features/feageo.cpp \
+    svm2k/predictor.cpp \
+    viewpointset.cpp
 
 HEADERS += \
     mainwindow.h \
     imglabel.h \
-#    glwidget.h \
     imgset.h \
     features/feaimg.h \
     features/lineSegmentFeature/vpdetection.h \
@@ -59,8 +65,16 @@ HEADERS += \
     OpenGLWidget/dragablewidget.h \
     OpenGLWidget/myglwidget.h \
     OpenGLWidget/trackball.h \
+    OpenGLWidget/glwidget.h \
+    OpenGLWidget/shader.hpp \
     RenderObject/mesh.h \
-#    RenderObject/gmodel.h
+    RenderObject/GModel.h \
+    RenderObject/sphere.h \
+    RenderObject/baserenderobject.h \
+    RenderObject/pointsmatchrelation.h \
+    features/feageo.h \
+    svm2k/predictor.h \
+    viewpointset.h
 
 DISTFILES += \
     shader/simple.vert \
@@ -74,6 +88,9 @@ FORMS += \
 # fftw3
 LIBS += -L/usr/local/lib/ \
         -lfftw3f
+
+# glew
+LIBS += -lGLEW -lGLU -lGL
 
 # assimp
 LIBS += -lassimp
@@ -128,4 +145,5 @@ LIBS += /usr/local/lib/libopencv_aruco.so.3.2 \
         /usr/local/lib/libopencv_xphoto.so.3.2
 
 RESOURCES += \
-    shaders.qrc
+    shaders.qrc \
+    svm2kdata.qrc

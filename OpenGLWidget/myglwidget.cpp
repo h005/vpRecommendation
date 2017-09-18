@@ -8,10 +8,18 @@
 
 MyGLWidget::MyGLWidget(const QString &modelPath, QWidget *parent)
     : DragableWidget(parent),
-      modelPath(modelPath),
-      m_mesh(0)
+      modelPath(modelPath)
+//      m_mesh(0)
 {
     this->modelPath = modelPath;
+//    model.load(modelPath.toStdString().c_str());
+//    m_mesh = new Mesh(modelPath.toStdString());
+//    m_mesh->load();
+//    std::pair<GLfloat, glm::mat4> scaleAndShift = m_mesh->recommandScaleAndShift();
+//    m_scaleBeforeRender = scaleAndShift.first;
+//    m_shiftBeforeRender = scaleAndShift.second;
+
+
 
     matrix.translate(0.0,0.0,-5.0);
 
@@ -23,18 +31,19 @@ MyGLWidget::MyGLWidget(const QString &modelPath, QWidget *parent)
 
 
     // camera position
+    m_scaleBeforeRender = 1.0;
     cameraPos = glm::vec3(0.f,0.f,0.f);
     flag_move = false;
-    camPosLength = 10.f;
+    camPosLength = 30.f;
     rate = 0.05;
 
-    m_scaleBeforeRender = 1.0;
 }
 
 MyGLWidget::~MyGLWidget()
 {
     makeCurrent();
     delete m_mesh;
+//    model.cleanUp();
     doneCurrent();
 }
 
@@ -47,6 +56,7 @@ void MyGLWidget::initializeGL()
 
     glClearColor(0,0,0,1);
 
+    // our camera never changes in this example
     m_camera = glm::lookAt(glm::vec3(0.f, 0.f, camPosLength), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 
     // load data for model rendering
@@ -56,7 +66,7 @@ void MyGLWidget::initializeGL()
 
     glEnable(GL_DEPTH_TEST);
 
-    m_mesh = new Mesh("");
+    m_mesh = new Mesh(modelPath.toStdString());
 
 
 }
@@ -69,7 +79,7 @@ void MyGLWidget::resizeGL(int w, int h)
 
 //    projection.setToIdentity();
 //    projection.perspective(fov, aspect, zNear, zFar);
-    m_proj = glm::perspective(glm::pi<float>() / 3, GLfloat(w) / h, 3.0f, 30.0f);
+    m_proj = glm::perspective(glm::pi<float>() / 3, GLfloat(w) / h, 0.1f, 30.0f);
 }
 
 void MyGLWidget::paintGL()

@@ -13,25 +13,35 @@ class FeaImg
 public:
     FeaImg();
 
-    void getRuleOfThirds(QString imgFile, float &res);
+    FeaImg(QString imgFile);
 
-    void getHogFeature(QString imgFile, std::vector<float> &hog);
+    void setFeatures();
 
-    void getGistFeature(QString imgFile, std::vector<float> &gist);
-
-    void getLSD_VanishLine(QString imgFile, std::vector<float> &lsd, std::vector<float> &vanish);
-
-    void getDirectionsOfLines(QString imgFile, std::vector<float> &lsd);
-
-    void getVanishLine(QString imgFile, std::vector<float> &vanish);
+    void fillInMat(cv::Mat &featureMat, int index);
 
 private:
+
+    void setRuleOfThirds();
+
+    void setHogFeature();
+
+    void setGistFeature();
+
+    void setLSD_VanishLine();
+
+    void setDirectionsOfLines();
+
+    void setVanishLine();
 
     void setCentroid(double &centroidRow, double &centroidCol, cv::Mat &mask);
 
     double getAngle(cv::Point2d u, cv::Point2d v);
 
     double absDouble(double val);
+
+    cv::Mat img;
+
+    std::vector<double> fea;
 
 };
 

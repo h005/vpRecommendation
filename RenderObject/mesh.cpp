@@ -10,7 +10,7 @@
 
 Mesh::Mesh(std::string mesh_path):
     indexBuf(QOpenGLBuffer::IndexBuffer),
-    m_mesh_path(mesh_path)
+    modelPath(mesh_path)
 {
     initializeOpenGLFunctions();
 
@@ -34,7 +34,8 @@ Mesh::~Mesh()
 
 void Mesh::initMesh()
 {
-    loadMesh();
+//    loadMesh();
+    load();
 
     arrayBuf.bind();
     arrayBuf.allocate(m_vertices.data(), m_vertices.size() * sizeof(QVector3D));
@@ -94,6 +95,92 @@ void Mesh::loadMesh()
           }
       }
       aiReleaseImport( scene);
+}
+
+std::pair<GLfloat, glm::mat4> Mesh::recommandScaleAndShift()
+{
+    GLfloat scale = drawScale();
+    glm::mat4 shiftTransform = glm::translate(glm::mat4(1.f), glm::vec3(-scene_center.x, -scene_center.y, -scene_center.z));
+    return std::make_pair(scale, shiftTransform);
+}
+
+static void get_bounding_box_for_node(const aiScene *sc,
+    const aiNode* nd,
+    aiVector3D* min,
+    aiVector3D* max,
+    aiMatrix4x4 &prev
+    ){
+    unsigned int n = 0, t;
+
+    aiMatrix4x4 trafo = prev;
+    trafo *= nd->mTransformation;
+
+    for (; n < nd->mNumMeshes; ++n) {
+        const aiMesh* mesh = sc->mMeshes[nd->mMeshes[n]];
+        for (t = 0; t < mesh->mNumVertices; ++t) {
+
+            aiVector3D tmp = mesh->mVertices[t];
+            tmp *= trafo;
+
+            min->x = aisgl_min(min->x, tmp.x);
+            min->y = aisgl_min(min->y, tmp.y);
+            min->z = aisgl_min(min->z, tmp.z);
+
+            max->x = aisgl_max(max->x, tmp.x);
+            max->y = aisgl_max(max->y, tmp.y);
+            max->z = aisgl_max(max->z, tmp.z);
+        }
+    }
+
+    for (n = 0; n < nd->mNumChildren; ++n) {
+        get_bounding_box_for_node(sc, nd->mChildren[n], min, max, trafo);
+    }
+}
+
+static void get_bounding_box(const aiScene *sc, aiVector3D* min, aiVector3D* max)
+{
+    // set identity
+    aiMatrix4x4 rootTransformation;
+
+    min->x = min->y = min->z = 1e10f;
+    max->x = max->y = max->z = -1e10f;
+    get_bounding_box_for_node(sc, sc->mRootNode, min, max, rootTransformation);
+}
+
+static std::string getBasePath(const std::string& path)
+{
+    size_t pos = path.find_last_of("\\/");
+    return (std::string::npos == pos) ? "" : path.substr(0, pos + 1);
+}
+
+bool Mesh::load()
+{
+    modelPath = "/home/hejw005/Documents/learning/QtProject/QOpenGLWidgetTriangle/teapot.obj";
+    pImporter = new Assimp::Importer();
+    scene = pImporter->ReadFile(modelPath,
+                                aiProcessPreset_TargetRealtime_Quality);
+    if (!scene) {
+        return 0;
+    }
+    // Generate Model Information
+    get_bounding_box(scene, &scene_min, &scene_max);
+    scene_center.x = (scene_min.x + scene_max.x) / 2.f;
+    scene_center.y = (scene_min.y + scene_max.y) / 2.f;
+    scene_center.z = (scene_min.z + scene_max.z) / 2.f;
+    basePath = getBasePath(modelPath);
+
+    return 1;
+}
+
+float Mesh::drawScale()
+{
+    float tmp = -1e10;
+    tmp = aisgl_max(scene_max.x - scene_min.x, tmp);
+    tmp = aisgl_max(scene_max.y - scene_min.y, tmp);
+    tmp = aisgl_max(scene_max.z - scene_min.z, tmp);
+    float scale = 2.f / tmp;
+//    float scale = 100.f / tmp;
+    return scale;
 }
 
 void Mesh::drawMesh(QOpenGLShaderProgram *program)

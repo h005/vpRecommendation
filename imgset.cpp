@@ -40,14 +40,6 @@ void ImgSet::setBackGround()
                                     Qt::SmoothTransformation));
         qDebug() << "imgLabel size " << endl;
         qDebug() << imgLabels[i]->size() << endl;
-//        QPalette palette = imgLabels[i]->palette();
-//        palette.setBrush(QPalette::Window,
-//                         QBrush(QPixmap(imgFiles[i]).scaled(
-//                                    imgLabels[i]->size(),
-//                                    Qt::IgnoreAspectRatio,
-//                                    Qt::SmoothTransformation)));
-//        imgLabels[i]->setPalette(palette);
-//        imgLabels[i]->repaint();
     }
 }
 
@@ -63,13 +55,25 @@ QSize ImgSet::imgLabelSize()
 
 void ImgSet::setFeatures()
 {
-    FeaImg *feaImg = new FeaImg();
+    int numRow = imgFiles.size();
+    int numCol = 9 + 3 + 960 + 14;
+    imgFeature.create(numRow,numCol, CV_64FC1);
     for(int i=0;i<imgFiles.size();i++)
     {
-//        float res;
-//        feaImg->getRuleOfThirds(imgFiles[i],res);
-        std::vector<float> vanishFea;
-        feaImg->getVanishLine(imgFiles[i], vanishFea);
-        break;
+        FeaImg *feaImg = new FeaImg(imgFiles[i]);
+        feaImg->setFeatures();
+        feaImg->fillInMat(imgFeature, i);
+        delete feaImg;
     }
+}
+
+void ImgSet::copyImgFeatureTo(cv::Mat &imgFea)
+{
+    imgFeature.copyTo(imgFea);
+}
+
+void ImgSet::printLabel(cv::Mat &label)
+{
+    for(int i=0;i<imgFiles.size();i++)
+        std::cout << imgFiles[i].toStdString() << " " << (int)label.at<char>(i,0) << std::endl;
 }

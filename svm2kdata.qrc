@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/svm2kData">
+        <file>svm2k/data/ga.txt</file>
+        <file>svm2k/data/gb.txt</file>
+        <file>svm2k/data/XTrain1.txt</file>
+        <file>svm2k/data/XTrain2.txt</file>
+        <file>svm2k/data/geoPsParameter.txt</file>
+        <file>svm2k/data/imgPsParameter.txt</file>
+    </qresource>
+</RCC>

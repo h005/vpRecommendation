@@ -5,8 +5,10 @@
 #include <QGridLayout>
 #include <QFileDialog>
 #include "imgset.h"
-#include "glwidget.h"
+#include "OpenGLWidget/glwidget.h"
 #include "OpenGLWidget/myglwidget.h"
+#include "features/feageo.h"
+#include "viewpointset.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +31,15 @@ private slots:
 
     void on_importModel_clicked();
 
+    void on_recommend_clicked();
+
+    void on_assessModel_clicked();
+
+private:
+    void imageQualityAssessment();
+
+    void viewpointQualityAssessment();
+
 private:
     Ui::MainWindow *ui;
     QGridLayout *mainWidgetLayout;
@@ -36,7 +47,9 @@ private:
 //    ImgLabel **imglabels;
 
     ImgSet *imgSet;
-//    GLWidget *glWidget;
+    ViewPointSet *vpSet;
+    FeaGeo *feaGeo;
+    GLWidget *glWidget;
     MyGLWidget *myGLWidget;
 
     // setup UI
