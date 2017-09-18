@@ -266,11 +266,11 @@ void Predictor::fillData()
     fillMatrix(":/svm2kData/svm2k/data/geoPsParameter.txt", geoFeaScale);
     std::cout << "load geoFeaScale matrix done" << std::endl;
 
-    bam = -0.2068;
-    bbm = -1.3079;
+//    bam = -0.2068;
+//    bbm = -1.3079;
 
-//    bam = -0.2450;
-//    bbm = -1.1504;
+    bam = -0.2450;
+    bbm = -1.1504;
 
     std::cout << "XTrain " << XTrain2.cols << std::endl;
 }
