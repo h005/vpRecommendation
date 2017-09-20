@@ -43,7 +43,24 @@ public:
 
     float getSceneZ();
 
+    // this function show the good and bad viewpoints with different cameras
     void setRecommendationLocations(cv::Mat &score);
+
+    // show the good and bad viewpoints with different density of cameras
+    // only one camera
+    ///
+    /// \brief setRecommendationLocationsWithRatio
+    /// \param score
+    ///
+    /// ratio = a : b : c
+    /// and a > b > c
+    /// sample the viewpoints from the scores from high to low
+    /// assume that we will show Nsample cameras
+    /// Then we separate the scores uniformaly into numel(ratio) parts
+    /// we show ratio(i) / sum(ratio) * Nsample cameras in the i-th part
+    ///
+    ///
+    void setRecommendationLocationsWithRatio(cv::Mat &score);
 
     void printScore(cv::Mat &score);
 

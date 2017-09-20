@@ -120,7 +120,30 @@ void ViewPointSet::setRecommendationLocations(cv::Mat &score)
     feaGeo->setRecommendationLocationsNeg(cameraPos, sceneZ, indexNeg);
 
 //    for(int i=0;i<score.rows;i++)
-//        std::cout << score.at<double>(i,0) << " " << indexScore.at<int>(i,0) << std::endl;
+    //        std::cout << score.at<double>(i,0) << " " << indexScore.at<int>(i,0) << std::endl;
+}
+
+void ViewPointSet::setRecommendationLocationsWithRatio(cv::Mat &score)
+{
+    double sumRatio = 0.0;
+    double ratioVal[3] = {0.3,0.2,0.1};
+    std::vector<double> ratio(ratioVal, ratioVal + sizeof(ratioVal) / sizeof(double));
+    for(int i=0;i < ratio.size();i++)
+        sumRatio += ratio[i];
+    cv::Mat indexScore;
+    cv::sortIdx(score, indexScore, CV_SORT_EVERY_COLUMN + CV_SORT_DESCENDING);
+    double topRate = 0.2;
+    int numsCamera = topRate * score.rows;
+
+    std::vector<int> index;
+    for(int indexPart = 0; indexPart < ratio.size(); indexPart++)
+    {
+        int base = indexPart * score.rows / ratio.size();
+        for(int i = 0; i < numsCamera * ratio[indexPart] / sumRatio; i++)
+            index.push_back(indexScore.at<int>(i + base, 0));
+    }
+
+    feaGeo->setRecommendationLocationsPos(cameraPos, sceneZ, index);
 }
 
 void ViewPointSet::printScore(cv::Mat &score)

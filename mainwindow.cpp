@@ -204,7 +204,8 @@ void MainWindow::viewpointQualityAssessment()
     predictor->setGeoFeatures(vpSet);
     cv::Mat score;
     predictor->predictScoreWithViewId(score, Predictor::ViewId_Geo);
-    vpSet->setRecommendationLocations(score);
+//    vpSet->setRecommendationLocations(score);
+    vpSet->setRecommendationLocationsWithRatio(score);
     score.release();
     delete predictor;
 
