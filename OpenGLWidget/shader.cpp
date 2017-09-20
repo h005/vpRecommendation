@@ -54,7 +54,7 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
     GLint Result = GL_FALSE;
     int InfoLogLength;
 
-    printf("OpenGL version is (%s)\n", glGetString(GL_VERSION));
+//    printf("OpenGL version is (%s)\n", glGetString(GL_VERSION));
 
     GLboolean shaderCompile = false;
     glGetBooleanv(GL_SHADER_COMPILER, &shaderCompile);

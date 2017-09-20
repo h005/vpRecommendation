@@ -4,17 +4,22 @@
 
 #include <QDebug>
 
+QPlainTextEdit *messageWidget;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
+//    ui->scrollArea->resize(QSize(630,1000));
+//    ui->scrollArea->setSizePolicy();
+
     // set the background color
 //    setStyleSheet("background-color:rgb(225,255,255);");
     setStyleSheet("background-color:rgb(75,75,75);");
 
-    setUpBtnStyle();
+    setUpUiStyle();
     // mainWidgetLayout Setup
     mainWidgetLayout = new QGridLayout();
     mainWidgetLayout->setSpacing(10);
@@ -33,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // set feaGeo to NULL pointer
     feaGeo = NULL;
+    messageWidget = ui->plainTextEdit;
 }
 
 MainWindow::~MainWindow()
@@ -52,16 +58,19 @@ void MainWindow::setGLWidget()
 //    mainWidgetLayout->addWidget(myGLWidget);
     mainWidgetLayout->addWidget(glWidget);
     ui->mainWidget->setLayout(mainWidgetLayout);
-    qDebug() << "set glWidget done" << endl;
+    messageWidget->appendPlainText("set OpenGL widget done");
+//    qDebug() << "set glWidget done" << endl;
 }
 
 void MainWindow::on_importImgs_clicked()
 {
-
     QStringList imgFiles = QFileDialog::getOpenFileNames(this,
                                              QString("Load images"),
                                              QString("/home/hejw005/Documents/learning/QtProject/vpRecommendation/data/imgs/"),
-                                             QString("Image Files(*.jpg *.jpeg *.JPG *.JPEG *.png)"));
+                                             QString("Image Files(*.jpg *.jpeg *.JPG *.JPEG *.png)"),
+                                             nullptr,
+                                             QFileDialog::DontUseNativeDialog);
+
     imgSet->setImgFiles(imgFiles);
     imgSet->initialImgLabels();
 
@@ -79,8 +88,8 @@ void MainWindow::on_importImgs_clicked()
 
 void MainWindow::setImgLabels()
 {
-    int minColWidth = 480;
-    int minRowHeigth = 320;
+    int minColWidth = 300;
+    int minRowHeigth = 225;
     int numImgs = imgSet->size();
     int rows = numImgs / 2;
     // fill the images in the girds
@@ -104,13 +113,17 @@ void MainWindow::setImgLabels()
     }
 
     ui->mainWidget->setLayout(mainWidgetLayout);
-    qDebug() << "set Background done" << endl;
+//    qDebug() << "set Background done" << endl;
+    messageWidget->document()->setPlainText("load the images");
 }
 
 
 void MainWindow::on_assess_clicked()
 {
+    statusBar()->showMessage("busy");
+    statusBar()->repaint();
     imageQualityAssessment();
+    statusBar()->showMessage("");
 ////    qDebug() << "imgLabel size " << imgSet->imgLabelSize() << endl;
 //    imgSet->setFeatures();
 //    Predictor *predictor = new Predictor();
@@ -126,9 +139,12 @@ void MainWindow::on_importModel_clicked()
     QString modelFile = QFileDialog::getOpenFileName(this,
                                              QString("Load 3D model"),
                                              QString("/home/hejw005/Documents/learning/QtProject/vpRecommendation/data/models/"),
-                                             QString("Image Files(*.ply *.off *.obj)"));
+                                             QString("Image Files(*.ply *.off *.obj)"),
+                                             nullptr,
+                                             QFileDialog::DontUseNativeDialog);
 
-    qDebug() << "modelFile " << modelFile << endl;
+//    qDebug() << "modelFile " << modelFile << endl;
+    messageWidget->appendPlainText(modelFile + " is loaded.");
 
     if(modelFile == "")
     {
@@ -151,10 +167,13 @@ void MainWindow::on_recommend_clicked()
 {
 //    feaGeo = new FeaGeo(this->glWidget);
 //    feaGeo->extractFeaturesPipline();
-    if(!feaGeo)
-        feaGeo = new FeaGeo(this->glWidget);
+//    if(!feaGeo)
+//        feaGeo = new FeaGeo(this->glWidget);
 //    feaGeo->vpRecommendPipLine();
+    statusBar()->showMessage("busy");
+    statusBar()->repaint();
     viewpointQualityAssessment();
+    statusBar()->showMessage("");
 }
 
 void MainWindow::on_assessModel_clicked()
@@ -165,6 +184,8 @@ void MainWindow::on_assessModel_clicked()
 
 void MainWindow::imageQualityAssessment()
 {
+    messageWidget->appendPlainText("set features");
+    messageWidget->repaint();
     imgSet->setFeatures();
     Predictor *predictor = new Predictor();
     // set img features ie 2D features ie XTest1
@@ -184,11 +205,12 @@ void MainWindow::viewpointQualityAssessment()
     cv::Mat score;
     predictor->predictScoreWithViewId(score, Predictor::ViewId_Geo);
     vpSet->setRecommendationLocations(score);
+    score.release();
     delete predictor;
 
 }
 
-void MainWindow::setUpBtnStyle()
+void MainWindow::setUpUiStyle()
 {
     ui->importImgs->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->assess->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
@@ -197,4 +219,43 @@ void MainWindow::setUpBtnStyle()
     ui->recommend->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->assessModel->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->SfM->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->Clear->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->plainTextEdit->setStyleSheet("QPlainTextEdit{color:white;background:rgb(35,35,35)}");
+
+    ui->geoLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
+    ui->imgLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
+    ui->sfmLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
+}
+
+void MainWindow::cleanImgSet()
+{
+    // clear the mainWidgetLayout
+    int numImgs = imgSet->size();
+    // fill the images in the grids
+    for(int i = 0; i < numImgs; i++)
+        mainWidgetLayout->removeWidget(imgSet->getImgLabel(i));
+    delete mainWidgetLayout;
+    mainWidgetLayout = new QGridLayout();
+    mainWidgetLayout->setSpacing(5);
+    mainWidgetLayout->setMargin(5);
+    imgSet->clean();
+    statusBar()->showMessage("");
+}
+
+void MainWindow::cleanVpSet()
+{
+    if(glWidget)
+        delete glWidget;
+    if(feaGeo)
+        delete feaGeo;
+
+}
+
+void MainWindow::on_Clear_clicked()
+{
+    cleanImgSet();
+    cleanVpSet();
+//    std::cout << "clear done" << std::endl;
+    messageWidget->clear();
+    statusBar()->showMessage("clear done");
 }

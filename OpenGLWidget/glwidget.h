@@ -73,9 +73,14 @@ public:
 
     void setVpRecommendationMatrix(glm::mat4 &vpRecommendationMatrix);
 
-    void setRecommendationLocations(std::vector<glm::vec2> &vpRcameraLocations,
-                                    float sceneZ,
-                                    std::vector<int> &index);
+    void setRecommendationLocationsPos(std::vector<glm::vec2> &vpRcameraLocations,
+                                       float sceneZ,
+                                       std::vector<int> &index);
+
+    void setRecommendationLocationsNeg(std::vector<glm::vec2> &vpRcameraLocations,
+                                       float sceneZ,
+                                       std::vector<int> &index);
+
     void clearVpRcameraLocations();
 
 //    glm::mat4 getMMatrix();
@@ -118,11 +123,13 @@ protected:
     GLfloat m_scaleBeforeRender;
     glm::mat4 m_shiftBeforeRender;
     GModel model;
-    GModel cameraModel;
+    GModel cameraModelPos;
+    GModel cameraModelNeg;
     GLuint m_sphereProgramID = 0;
     Sphere sphere;
     glm::vec3 cameraPos;
-    std::vector< glm::vec3 > vpRcameraLocations;
+    std::vector< glm::vec3 > vpRcameraLocationsPos;
+    std::vector< glm::vec3 > vpRcameraLocationsNeg;
     QPointF m_lastPos;
     bool flag_move;
     float camPosLength;

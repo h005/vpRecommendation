@@ -35,12 +35,18 @@ private slots:
 
     void on_assessModel_clicked();
 
+    void on_Clear_clicked();
+
 private:
     void imageQualityAssessment();
 
     void viewpointQualityAssessment();
 
-    void setUpBtnStyle();
+    void setUpUiStyle();
+
+    void cleanImgSet();
+
+    void cleanVpSet();
 
 private:
     Ui::MainWindow *ui;
@@ -52,7 +58,6 @@ private:
     ViewPointSet *vpSet;
     FeaGeo *feaGeo;
     GLWidget *glWidget;
-    MyGLWidget *myGLWidget;
 
     // setup UI
     void setImgLabels();

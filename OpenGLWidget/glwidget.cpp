@@ -60,7 +60,8 @@ GLWidget::GLWidget(const QString &modelPath, QWidget *parent)
       m_sphereProgramID(0)
 {
     model.load(modelPath.toLocal8Bit().data());
-    cameraModel.load("/home/hejw005/Documents/vpProject/myViewpoint/hellogl2/camera/camera1.obj");
+    cameraModelPos.load("/home/hejw005/Documents/vpProject/myViewpoint/hellogl2/camera/camera2.obj");
+    cameraModelNeg.load("/home/hejw005/Documents/vpProject/myViewpoint/hellogl2/camera/camera3.obj");
     std::pair<GLfloat, glm::mat4> scaleAndShift = model.recommandScaleAndShift();
     m_scaleBeforeRender = scaleAndShift.first;
     m_shiftBeforeRender = scaleAndShift.second;
@@ -69,8 +70,8 @@ GLWidget::GLWidget(const QString &modelPath, QWidget *parent)
 //    camPosLength = 50000.f;
     camPosLength = 3.f;
     rate = 0.05;
-    std::cout << "glwidget initial ... " << std::endl;
-    m_relation = new PointsMatchRelation("1.txt");
+//    std::cout << "glwidget initial ... " << std::endl;
+//    m_relation = new PointsMatchRelation("1.txt");
 }
 
 GLWidget::~GLWidget()
@@ -107,7 +108,9 @@ void GLWidget::cleanup()
     }
     sphere.cleanup();
     model.cleanUp();
-    cameraModel.cleanUp();
+    cameraModelPos.cleanUp();
+    cameraModelNeg.cleanUp();
+    clearVpRcameraLocations();
 
     doneCurrent();
 }
@@ -140,7 +143,8 @@ void GLWidget::initializeGL()
 
     // load data for model rendering
     model.bindDataToGL();
-    cameraModel.bindDataToGL();
+    cameraModelPos.bindDataToGL();
+    cameraModelNeg.bindDataToGL();
 
     // link program for drawing sphere
     m_sphereProgramID = LoadShaders("shader/sphereShader.vert", "shader/sphereShader.frag");
@@ -167,15 +171,26 @@ void GLWidget::paintGL()
 
 //    std::vector<glm::vec3> &points = m_relation->getModelPoints();
 
-    if (vpRcameraLocations.size() > 0) {
+    if (vpRcameraLocationsPos.size() > 0) {
         glUseProgram(m_sphereProgramID);
-
+//        std::cout << "draw pos cameras " << vpRcameraLocationsPos.size() << std::endl;
         std::vector<glm::vec3>::iterator it;
-        for (it = vpRcameraLocations.begin(); it != vpRcameraLocations.end(); it++) {
+        for (it = vpRcameraLocationsPos.begin(); it != vpRcameraLocationsPos.end(); it++) {
             // multiple point's position
             glm::mat4 pointMV = glm::translate(modelViewMatrix, *it);
             pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
-            cameraModel.draw(pointMV, m_proj);
+            cameraModelPos.draw(pointMV, m_proj);
+        }
+    }
+    if (vpRcameraLocationsNeg.size() > 0) {
+        glUseProgram(m_sphereProgramID);
+//        std::cout << "draw neg cameras " << vpRcameraLocationsNeg.size() << std::endl;
+        std::vector<glm::vec3>::iterator it;
+        for (it = vpRcameraLocationsNeg.begin(); it != vpRcameraLocationsNeg.end(); it++) {
+            // multiple point's position
+            glm::mat4 pointMV = glm::translate(modelViewMatrix, *it);
+            pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
+            cameraModelNeg.draw(pointMV, m_proj);
         }
     }
 
@@ -386,23 +401,39 @@ void GLWidget::setVpRecommendationMatrix(glm::mat4 &vpRecommendationMatrix)
     this->vpRecommendationMatrix = vpRecommendationMatrix;
 }
 
-void GLWidget::setRecommendationLocations(std::vector<glm::vec2> &vpRcameraLocations,
+void GLWidget::setRecommendationLocationsPos(std::vector<glm::vec2> &vpRcameraLocations,
                                           float sceneZ,
                                           std::vector<int> &index)
 {
+    vpRcameraLocationsPos.clear();
     glm::mat4 shift_scale = getOriginalMatrix();
 //    this->vpRcameraLocations = vpRcameraLocations;
     for(int i=0;i<index.size();i++)
     {
         glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,sceneZ,1.0);
         pos = glm::inverse(shift_scale) * pos;
-        this->vpRcameraLocations.push_back(glm::vec3(pos.x, pos.y, pos.z));
+        this->vpRcameraLocationsPos.push_back(glm::vec3(pos.x, pos.y, pos.z));
+    }
+}
+
+void GLWidget::setRecommendationLocationsNeg(std::vector<glm::vec2> &vpRcameraLocations,
+                                             float sceneZ,
+                                             std::vector<int> &index)
+{
+    vpRcameraLocationsNeg.clear();
+    glm::mat4 shift_scale = getOriginalMatrix();
+    for(int i=0;i<index.size();i++)
+    {
+        glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,sceneZ,1.0);
+        pos = glm::inverse(shift_scale) * pos;
+        this->vpRcameraLocationsNeg.push_back(glm::vec3(pos.x, pos.y, pos.z));
     }
 }
 
 void GLWidget::clearVpRcameraLocations()
 {
-    vpRcameraLocations.clear();
+    vpRcameraLocationsPos.clear();
+    vpRcameraLocationsNeg.clear();
 }
 
 glm::mat4 GLWidget::getOriginalMatrix()

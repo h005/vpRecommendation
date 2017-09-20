@@ -1,6 +1,9 @@
 #include "feageo.h"
 #include <glm/gtx/string_cast.hpp>
 
+#include <QPlainTextEdit>
+extern QPlainTextEdit *messageWidget;
+
 FeaGeo::FeaGeo(GLWidget *glWidget)
 {
     this->glWidget = glWidget;
@@ -15,7 +18,11 @@ void FeaGeo::vpRecommendPipLine(std::vector<glm::mat4> &cameraList,
     {
         initial(cameraList[i] * originalMV, glWidget->getProjMatrix());
         if(!(i % 100))
-            std::cout << "vpRecommendation .... " << i << std::endl;
+        {
+            messageWidget->appendPlainText("vpRecommendation sample points " + QString::number(i));
+            messageWidget->repaint();
+        }
+//            std::cout << "vpRecommendation .... " << i << std::endl;
 //        std::cout << glm::to_string(cameraList[i]) << std::endl;
         render();
         setImgMask(img,mask);
@@ -35,11 +42,18 @@ void FeaGeo::initial(glm::mat4 modelView, glm::mat4 projection)
     //    std::cout << modelview.
 }
 
-void FeaGeo::setRecommendationLocations(std::vector<glm::vec2> &vpRcameraLocations,
-                                        float sceneZ,
-                                        std::vector<int> &index)
+void FeaGeo::setRecommendationLocationsPos(std::vector<glm::vec2> &vpRcameraLocations,
+                                           float sceneZ,
+                                           std::vector<int> &index)
 {
-    glWidget->setRecommendationLocations(vpRcameraLocations, sceneZ, index);
+    glWidget->setRecommendationLocationsPos(vpRcameraLocations, sceneZ, index);
+}
+
+void FeaGeo::setRecommendationLocationsNeg(std::vector<glm::vec2> &vpRcameraLocations,
+                                           float sceneZ,
+                                           std::vector<int> &index)
+{
+    glWidget->setRecommendationLocationsNeg(vpRcameraLocations, sceneZ, index);
 }
 
 void FeaGeo::render()

@@ -10,6 +10,8 @@ class ImgSet
 public:
     ImgSet();
 
+    ~ImgSet();
+
     void setImgFiles(QStringList imgFiles);
 
     int size();
@@ -27,6 +29,8 @@ public:
     void copyImgFeatureTo(cv::Mat &imgFea);
 
     void printLabel(cv::Mat &label);
+
+    void clean();
 
 private:
     QStringList imgFiles;

@@ -22,18 +22,18 @@ void VPDetection::run( std::vector<std::vector<double> > &lines, cv::Point2d pp,
     this->f = f;
     this->noiseRatio = 0.5;
 
-    cout<<"get vp hypotheses . . ."<<endl;
+//    cout<<"get vp hypotheses . . ."<<endl;
     std::vector<std::vector<cv::Point3d> > vpHypo;
     getVPHypVia2Lines( vpHypo );
 
-    cout<<"get sphere grid . . ."<<endl;
+//    cout<<"get sphere grid . . ."<<endl;
     std::vector<std::vector<double> > sphereGrid;
     getSphereGrids( sphereGrid );
 
-    cout<<"test vp hypotheses . . ."<<endl;
+//    cout<<"test vp hypotheses . . ."<<endl;
     getBestVpsHyp( sphereGrid, vpHypo, vps );
 
-    cout<<"get final line clusters . . ."<<endl;
+//    cout<<"get final line clusters . . ."<<endl;
     double thAngle = 6.0 / 180.0 * CV_PI;
     lines2Vps( thAngle, vps, clusters );
     int clusteredNum = 0;
@@ -42,8 +42,8 @@ void VPDetection::run( std::vector<std::vector<double> > &lines, cv::Point2d pp,
         clusteredNum += clusters[i].size();
     }
 
-    cout<<"total: " <<lines.size()<<"  clusered: "<<clusteredNum;
-    cout<<"   X: "<<clusters[0].size()<<"   Y: "<<clusters[1].size()<<"   Z: "<<clusters[2].size()<<endl;
+//    cout<<"total: " <<lines.size()<<"  clusered: "<<clusteredNum;
+//    cout<<"   X: "<<clusters[0].size()<<"   Y: "<<clusters[1].size()<<"   Z: "<<clusters[2].size()<<endl;
 }
 
 void VPDetection::getVPHypVia2Lines( std::vector<std::vector<cv::Point3d> > &vpHypo )
@@ -319,9 +319,9 @@ void VPDetection::lines2Vps( double thAngle,
         vp2D[i].y =  vps[i].y * f / vps[i].z + pp.y;
     }
 
-    std::cout << "vp2D " << vp2D[0] << std::endl;
-    std::cout << "vp2D " << vp2D[1] << std::endl;
-    std::cout << "vp2D " << vp2D[2] << std::endl;
+//    std::cout << "vp2D " << vp2D[0] << std::endl;
+//    std::cout << "vp2D " << vp2D[1] << std::endl;
+//    std::cout << "vp2D " << vp2D[2] << std::endl;
 
     for ( int i = 0; i < lines.size(); ++ i )
     {

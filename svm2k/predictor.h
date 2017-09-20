@@ -14,6 +14,7 @@ public:
     enum ViewID{ViewId_Img,ViewId_Geo,ViewId_ImgGeo};
 public:
     Predictor();
+    ~Predictor();
     Predictor(cv::Mat XTest1);
     Predictor(cv::Mat XTest1, cv::Mat XTest2);
 
@@ -45,6 +46,8 @@ private:
     void expDK(cv::Mat &DK, double &sigma, cv::Mat &TK);
 
     void sigmod(cv::Mat &score);
+
+    void cleanUp();
 
 private:
 

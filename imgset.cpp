@@ -1,10 +1,18 @@
 #include "imgset.h"
 #include "features/feaimg.h"
+#include <QPlainTextEdit>
+
+extern QPlainTextEdit *messageWidget;
 
 ImgSet::ImgSet()
 {
     imgFiles.clear();
     imgLabels = NULL;
+}
+
+ImgSet::~ImgSet()
+{
+    clean();
 }
 
 void ImgSet::setImgFiles(QStringList imgFiles)
@@ -74,6 +82,21 @@ void ImgSet::copyImgFeatureTo(cv::Mat &imgFea)
 
 void ImgSet::printLabel(cv::Mat &label)
 {
+//    for(int i=0;i<imgFiles.size();i++)
+//        std::cout << imgFiles[i].toStdString() << " " << (int)label.at<char>(i,0) << std::endl;
     for(int i=0;i<imgFiles.size();i++)
-        std::cout << imgFiles[i].toStdString() << " " << (int)label.at<char>(i,0) << std::endl;
+        messageWidget->appendPlainText(imgFiles[i] + " " + QString::number((int)label.at<char>(i,0)));
+}
+
+void ImgSet::clean()
+{
+
+    imgFeature.release();
+
+    for(int i=0;i<imgFiles.size();i++)
+        delete imgLabels[i];
+    delete[] imgLabels;
+    imgLabels = NULL;
+
+    imgFiles.clear();
 }

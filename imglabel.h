@@ -24,8 +24,11 @@ public:
     void setBackground();
 
 private:
+    void clean();
 
-    QPixmap img;
+private:
+
+    QPixmap *img;
 
 };
 

@@ -4,17 +4,19 @@
 ImgLabel::ImgLabel(QWidget *parent) :
     QLabel(parent)
 {
+    img = NULL;
     setStyleSheet("background-color:rgb(176,196,222);");
 }
 
 ImgLabel::~ImgLabel()
 {
-
+    clean();
 }
 
 void ImgLabel::loadPixmap(QString file)
 {
-    img.load(file);
+    img = new QPixmap();
+    img->load(file);
 }
 
 void ImgLabel::mousePressEvent(QMouseEvent *event)
@@ -49,7 +51,7 @@ void ImgLabel::resizeEvent(QResizeEvent *event)
     setPalette(pal);
     setAutoFillBackground(true);
 */
-    setPixmap(img.scaled(event->size(),
+    setPixmap(img->scaled(event->size(),
                          Qt::KeepAspectRatio,
                          Qt::SmoothTransformation));
 }
@@ -67,4 +69,9 @@ void ImgLabel::setBackground()
 //    this->setPixmap(backGround);
 //    update();
 
+}
+
+void ImgLabel::clean()
+{
+    delete img;
 }

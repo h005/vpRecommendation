@@ -303,7 +303,7 @@ void GModel::bindDataToGL() {
     // 1.将纹理读取到显存
     // 2.递归创建meshEntry
     textureIdMap.clear();
-    std::cout << "scene materials " << scene->mNumMaterials << std::endl;
+//    std::cout << "scene materials " << scene->mNumMaterials << std::endl;
     for (unsigned int m = 0; m<scene->mNumMaterials; m++)
     {
         int texIndex = 0;

@@ -5,10 +5,18 @@
 #include <QTextStream>
 
 #include <fstream>
+#include <QPlainTextEdit>
+
+extern QPlainTextEdit *messageWidget;
 
 Predictor::Predictor()
 {
     fillData();
+}
+
+Predictor::~Predictor()
+{
+    cleanUp();
 }
 
 Predictor::Predictor(cv::Mat XTest1)
@@ -87,8 +95,6 @@ void Predictor::predictLabelWithViewId(cv::Mat &label, int viewId)
     for(int i=0;i<score.rows;i+=2)
         for(int j=0;j<score.cols;j++)
         {
-            std::cout << score.at<double>(i,j) << std::endl;
-            std::cout << score.at<double>(i+1,j) << std::endl;
             if(score.at<double>(i,j) < score.at<double>(i+1,j))
             {
                 label.at<char>(i,j) = -1;
@@ -253,35 +259,52 @@ void Predictor::sigmod(cv::Mat &score)
             score.at<double>(i,j) = 1.0 / (1.0 + exp( -score.at<double>(i,j) ));
 }
 
+void Predictor::cleanUp()
+{
+    XTrain1.release();
+    XTrain2.release();
+    XTest1.release();
+    XTest2.release();
+    YTest.release();
+    ga.release();
+    gb.release();
+    imgFeaScale.release();
+    geoFeaScale.release();
+}
+
 
 void Predictor::fillData()
 {
+    messageWidget->appendPlainText("predictor data loading...");
+    messageWidget->repaint();
     // fill in the ga
     fillMatrix(":/svm2kData/svm2k/data/ga.txt", ga);
     cv::transpose(ga,ga);
-    std::cout << "load ga matrix done " << std::endl;
+//    std::cout << "load ga matrix done " << std::endl;
     // fill in the gb
     fillMatrix(":/svm2kData/svm2k/data/gb.txt", gb);
     cv::transpose(gb,gb);
-    std::cout << "load gb matrix done " << std::endl;
+//    std::cout << "load gb matrix done " << std::endl;
     // fill in the XTrain1
     fillMatrix(":/svm2kData/svm2k/data/XTrain1.txt", XTrain1);
-    std::cout << "load XTrain1 matrix done" << std::endl;
+//    std::cout << "load XTrain1 matrix done" << std::endl;
     // fill in the XTrain2
     fillMatrix(":/svm2kData/svm2k/data/XTrain2.txt", XTrain2);
-    std::cout << "load XTrain1 matrix done" << std::endl;
+//    std::cout << "load XTrain1 matrix done" << std::endl;
     fillMatrix(":/svm2kData/svm2k/data/imgPsParameter.txt", imgFeaScale);
-    std::cout << "load imgFeaScale matrix done" << std::endl;
+//    std::cout << "load imgFeaScale matrix done" << std::endl;
     fillMatrix(":/svm2kData/svm2k/data/geoPsParameter.txt", geoFeaScale);
-    std::cout << "load geoFeaScale matrix done" << std::endl;
+//    std::cout << "load geoFeaScale matrix done" << std::endl;
 
 //    bam = -0.2068;
 //    bbm = -1.3079;
 
-    // sep 0918
+    // sep 18
     bam = -0.2450;
     bbm = -1.1504;
 
+    messageWidget->appendPlainText("predictor data load done");
+    messageWidget->repaint();
 //    std::cout << "XTrain " << XTrain2.cols << std::endl;
 }
 
