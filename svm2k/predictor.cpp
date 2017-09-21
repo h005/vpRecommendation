@@ -89,6 +89,8 @@ void Predictor::predictLabelWithViewId(cv::Mat &label, int viewId)
 {
     cv::Mat score;
     predictScore(score, viewId);
+    for(int i=0;i<score.rows;i++)
+        std::cout << "score " << score.at<double>(i,0) << std::endl;
     // convert the score to label
     assert(!(XTest1.rows % 2));
     label.create(score.rows,score.cols,CV_8SC1);
