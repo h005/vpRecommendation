@@ -45,10 +45,18 @@ private slots:
 
     void on_sfm_pt2mesh_clicked();
 
+    void on_sfmClean_clicked();
+
+    void on_cleanLog_clicked();
+
+    void on_recommendKnowAxis_clicked();
+
 private:
     void imageQualityAssessment();
 
-    void viewpointQualityAssessment();
+    // knowAxis 1 means we know the axis
+    // knwoAxis 0 means we do not know the axis
+    void viewpointQualityAssessment(int knowAxis);
 
     void setUpUiStyle();
 

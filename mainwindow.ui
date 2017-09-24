@@ -58,51 +58,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="sfmLabel">
-        <property name="text">
-         <string>Structure from Motion</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="sfm_imgFolder">
-        <property name="text">
-         <string>imgs Folder</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="sfm_outputFolder">
-        <property name="text">
-         <string>output Folder</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="SfM">
-        <property name="text">
-         <string>SfM</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="sfm_pt2mesh">
-        <property name="text">
-         <string>pt2mesh</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLabel" name="geoLabel">
         <property name="text">
          <string>Geometry Assessment</string>
@@ -120,21 +75,80 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="assessModel">
+       <widget class="QPushButton" name="recommend">
         <property name="text">
-         <string>Assess</string>
+         <string>vpR Known axis</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="recommend">
+       <widget class="QPushButton" name="recommendKnowAxis">
         <property name="text">
-         <string>Recommend</string>
+         <string>vpR unKnown Axis</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="sfmLabel">
+        <property name="text">
+         <string>Structure from Motion</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="sfm_imgFolder">
+        <property name="text">
+         <string>Imgs Folder</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="sfm_outputFolder">
+        <property name="text">
+         <string>Output Folder</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="SfM">
+        <property name="text">
+         <string>SfM</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="sfm_pt2mesh">
+        <property name="text">
+         <string>Pt2mesh</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cleanLog">
+        <property name="text">
+         <string>Clean Log</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="sfmClean">
+        <property name="text">
+         <string>Clean</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>

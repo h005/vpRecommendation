@@ -19,11 +19,23 @@ void ViewPointSet::setViewpoints()
     genMVMatrix(mvList);
 }
 
-void ViewPointSet::setFeatures(GLWidget *glWidget)
+void ViewPointSet::setFeatures(GLWidget *glWidget, int knowAxis)
 {
     setViewpoints();
+    rectifyMatrix = glWidget->getNowModelMatrix();
+    rectifyMatrix = glm::inverse(rectifyMatrix);
+    // rectify the camera positions
+    if(!knowAxis)
+    {
+        for(int i=0;i<cameraPos.size();i++)
+        {
+            glm::vec4 pos = glm::vec4(cameraPos[i].x, cameraPos[i].y, sceneZ, 1.0);
+            pos = rectifyMatrix * pos;
+//            cameraPos[i].x = pos
+        }
+    }
     setGLWidget(glWidget);
-    feaGeo->vpRecommendPipLine(mvList, geoFeatures);
+    feaGeo->vpRecommendPipLine(mvList, geoFeatures, knowAxis);
 }
 
 void ViewPointSet::copyGeoFeatureTo(cv::Mat &geoFea)

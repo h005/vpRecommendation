@@ -2,6 +2,7 @@
 
 #include <QPlainTextEdit>
 #include <iostream>
+#include <QDir>
 
 extern QPlainTextEdit *messageWidget;
 
@@ -60,7 +61,7 @@ void SfMContainer::sfm_imgs2ptModel()
     QProcess::ExitStatus exitStatus = QProcess::NormalExit;
     if(!checkFolder())
     {
-        std::cout << "please set the input and output folder first" << std::endl;
+        messageWidget->appendPlainText("please set the input and output folder first");
         return;
     }
     MVG_MVS = 1;
@@ -73,23 +74,48 @@ void SfMContainer::sfm_pt2MeshModel()
     QProcess::ExitStatus exitStatus = QProcess::NormalExit;
     if(!checkFolder())
     {
-        std::cout << "please set the input and output folder first" << std::endl;
+        messageWidget->appendPlainText("please set the input and output folder first");
         return;
     }
     if(openMVG_pipLineStep != openMVG_main_End && openMVG_pipLineStep != openMVG_main_SfMInit_ImageListing_Pipline)
     {
-        std::cout << "structure from motion is still running..." << std::endl;
+        messageWidget->appendPlainText("structure from motion is still running...");
         return;
     }
     if(openMVG_pipLineStep == openMVG_main_SfMInit_ImageListing_Pipline)
     {
-        std::cout << "please run sfm first " << std::endl;
+        messageWidget->appendPlainText("please run sfm first");
         return;
     }
     MVG_MVS = 2;
     openMVS_pipLineStep = openMVG_main_openMVG2openMVS_Pipline;
     reconstruction(exitCode, exitStatus);
-//    pt2MeshModel(exitCode, exitStatus);
+    //    pt2MeshModel(exitCode, exitStatus);
+}
+
+void SfMContainer::cleanFiles()
+{
+    QDir output(outputFolder + "/model");
+    output.removeRecursively();
+    output = QDir(outputFolder + "/reconstruction");
+    output.removeRecursively();
+    cleanLog();
+}
+
+void SfMContainer::cleanLog()
+{
+    // remove the log and dmap files
+    QDir thisProgram;
+    QStringList filters;
+    filters << "*.log"
+            << "*.dmap";
+    thisProgram.setFilter(QDir::Files | QDir::NoSymLinks);
+    thisProgram.setNameFilters(filters);
+    foreach(QFileInfo mfi, thisProgram.entryInfoList())
+    {
+        QFile::remove(mfi.fileName());
+        std::cout << "remove " << mfi.fileName().toStdString() << std::endl;
+    }
 }
 
 bool SfMContainer::checkFolder()
@@ -130,27 +156,32 @@ void SfMContainer::imgs2ptModel(int exitCode, QProcess::ExitStatus exitStatus)
     {
         switch (openMVG_pipLineStep) {
         case openMVG_main_SfMInit_ImageListing_Pipline:
+            messageWidget->appendPlainText("perform_openMVG_main_SfMInit_ImageListing ...");
             perform_openMVG_main_SfMInit_ImageListing(exitCode, exitStatus);
             openMVG_pipLineStep++;
             break;
         case openMVG_main_ComputeFeatures_Pipline:
-            std::cout << "perform_openMVG_main_SfMInit_ImageListing done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("perform_openMVG_main_ComputeFeatures ...");
             perform_openMVG_main_ComputeFeatures(exitCode, exitStatus);
             openMVG_pipLineStep++;
             break;
         case openMVG_main_ComputeMatches_Pipline:
-            std::cout << "perform_openMVG_main_ComputeFeatures done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("perform_openMVG_main_ComputeMatches ...");
             perform_openMVG_main_ComputeMatches(exitCode, exitStatus);
             openMVG_pipLineStep++;
             break;
         case openMVG_main_IncrementalSfM_Pipline:
-            std::cout << "perform_openMVG_main_ComputeMatches done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("perform_openMVG_main_IncrementalSfM ...");
             perform_openMVG_main_IncrementalSfM(exitCode, exitStatus);
             openMVG_pipLineStep++;
             break;
         default:
             openMVG_pipLineStep++;
-            std::cout << "perform_openMVG_main_IncrementalSfM done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("#################################\nstructure from motion done");
             break;
         }
     }
@@ -158,16 +189,16 @@ void SfMContainer::imgs2ptModel(int exitCode, QProcess::ExitStatus exitStatus)
     {
         switch (openMVG_pipLineStep) {
         case openMVG_main_ComputeFeatures_Pipline:
-            std::cout << "perform_openMVG_main_SfMInit_ImageListing error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVG_main_SfMInit_ImageListing error");
             break;
         case openMVG_main_ComputeMatches_Pipline:
-            std::cout << "perform_openMVG_main_ComputeFeatures error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVG_main_ComputeFeatures error");
             break;
         case openMVG_main_IncrementalSfM_Pipline:
-            std::cout << "perform_openMVG_main_ComputeMatches error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVG_main_ComputeMatches error");
             break;
         default:
-            std::cout << "perform_openMVG_main_IncrementalSfM error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVG_main_IncrementalSfM error");
             break;
         }
     }
@@ -196,8 +227,6 @@ void SfMContainer::perform_openMVG_main_SfMInit_ImageListing(int exitCode,
 void SfMContainer::perform_openMVG_main_ComputeFeatures(int exitCode,
                                                         QProcess::ExitStatus exitStatus)
 {
-    std::cout << "exitCode " << exitCode << std::endl;
-    std::cout << "QProcess ExitStatus " << exitStatus << std::endl;
 
     QStringList arguments;
     arguments.clear();
@@ -267,30 +296,39 @@ void SfMContainer::pt2MeshModel(int exitCode, QProcess::ExitStatus exitStatus)
     {
         switch (openMVS_pipLineStep) {
         case openMVG_main_openMVG2openMVS_Pipline:
+            messageWidget->appendPlainText("perform_openMVG_main_openMVG2openMVS ...");
             perform_openMVG_main_openMVG2openMVS(exitCode, exitStatus);
             openMVS_pipLineStep++;
             break;
         case openMVS_DensifyPointCloud_Pipline:
-            std::cout << "perform_openMVG_main_openMVG2openMVS done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("perform_openMVS_DensifyPointCloud ...");
             perform_openMVS_DensifyPointCloud(exitCode, exitStatus);
             openMVS_pipLineStep++;
             break;
         case openMVS_ReconstructMesh_Pipline:
-            std::cout << "perform_openMVS_DensifyPointCloud done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("perform_openMVS_ReconstructMesh ...");
             perform_openMVS_ReconstructMesh(exitCode, exitStatus);
+            openMVS_pipLineStep++;
+            // refineMesh is time consuming, pass
             openMVS_pipLineStep++;
             break;
         case openMVS_RefineMesh_Pipline:
-            std::cout << "perform_openMVS_ReconstructMesh done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("perform_openMVS_RefineMesh ...");
             perform_openMVS_RefineMesh(exitCode, exitStatus);
             openMVS_pipLineStep++;
             break;
         case openMVS_TextureMesh_Pipline:
-            std::cout << "perform_openMVS_RefineMesh done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("perform_openMVS_TextureMesh ...");
             perform_openMVS_TextureMesh(exitCode, exitStatus);
+            openMVS_pipLineStep++;
             break;
         default:
-            std::cout << "perform_openMVS_TextureMesh done" << std::endl;
+            messageWidget->appendPlainText("done");
+            messageWidget->appendPlainText("#################################\npt 2 mesh done");
             openMVS_pipLineStep++;
             break;
         }
@@ -299,19 +337,19 @@ void SfMContainer::pt2MeshModel(int exitCode, QProcess::ExitStatus exitStatus)
     {
         switch (openMVG_pipLineStep) {
         case openMVS_DensifyPointCloud_Pipline:
-            std::cout << "perform_openMVG_main_openMVG2openMVS error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVG_main_openMVG2openMVS error");
             break;
         case openMVS_ReconstructMesh_Pipline:
-            std::cout << "perform_openMVS_DensifyPointCloud error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVS_DensifyPointCloud error");
             break;
         case openMVS_RefineMesh_Pipline:
-            std::cout << "perform_openMVS_ReconstructMesh error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVS_ReconstructMesh error");
             break;
         case openMVS_TextureMesh_Pipline:
-            std::cout << "perform_openMVS_RefineMesh error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVS_RefineMesh error");
             break;
         default:
-            std::cout << "perform_openMVS_TextureMesh error" << std::endl;
+            messageWidget->appendPlainText("perform_openMVS_TextureMesh error");
             break;
         }
     }
@@ -368,7 +406,7 @@ void SfMContainer::perform_openMVS_TextureMesh(int exitCode,
     arguments.clear();
     arguments << "--export-type"
               << "obj"
-              << outputFolder + "/reconstruction/scene_mesh.mvs";
+              << outputFolder + "/reconstruction/scene_dense_mesh.mvs";
 
     myProcess->start(TextureMesh, arguments);
 }

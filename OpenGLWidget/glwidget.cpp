@@ -436,9 +436,19 @@ void GLWidget::clearVpRcameraLocations()
     vpRcameraLocationsNeg.clear();
 }
 
+glm::mat4 GLWidget::getNowMatrix()
+{
+    return getModelMatrix();
+}
+
 glm::mat4 GLWidget::getOriginalMatrix()
 {
     return glm::scale(glm::mat4(1.f), glm::vec3(m_scaleBeforeRender)) * m_shiftBeforeRender;
+}
+
+glm::mat4 GLWidget::getNowModelMatrix()
+{
+    return DragableWidget::getModelMatrix();
 }
 
 glm::mat4 GLWidget::getMVMatrix()

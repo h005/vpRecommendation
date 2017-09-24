@@ -35,7 +35,8 @@ public:
 
     void setViewpoints();
 
-    void setFeatures(GLWidget *glWidget);
+    // it depends we know the axis direction or not
+    void setFeatures(GLWidget *glWidget, int knowAxis);
 
     void copyGeoFeatureTo(cv::Mat &geoFea);
 
@@ -82,6 +83,8 @@ private:
     FeaGeo *feaGeo;
 
     cv::Mat geoFeatures;
+
+    glm::mat4 rectifyMatrix;
 
     std::vector<glm::vec2> cameraPos;
     std::vector<glm::mat4> mvList;

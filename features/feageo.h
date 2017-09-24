@@ -32,7 +32,7 @@ class FeaGeo
 public:
     FeaGeo(GLWidget *glWidget);
 
-    void vpRecommendPipLine(std::vector<glm::mat4> &cameraList, cv::Mat &geoFeature);
+    void vpRecommendPipLine(std::vector<glm::mat4> &cameraList, cv::Mat &geoFeature, int knowAxis);
 
     // fill in the modelView and projection matrix
     void initial(glm::mat4 modelView, glm::mat4 projection);

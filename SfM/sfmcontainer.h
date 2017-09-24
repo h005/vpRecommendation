@@ -35,6 +35,10 @@ public:
 
     void sfm_pt2MeshModel();
 
+    void cleanFiles();
+
+    void cleanLog();
+
 private:
 
     bool checkFolder();

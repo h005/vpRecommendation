@@ -10,16 +10,20 @@ FeaGeo::FeaGeo(GLWidget *glWidget)
 }
 
 void FeaGeo::vpRecommendPipLine(std::vector<glm::mat4> &cameraList,
-                                cv::Mat &geoFeature)
+                                cv::Mat &geoFeature,
+                                int knowAxis)
 {
-    glm::mat4 originalMV = glWidget->getOriginalMatrix();
-
+    glm::mat4 originalMV;
+    if(knowAxis)
+        originalMV = glWidget->getOriginalMatrix();
+    else
+        originalMV = glWidget->getNowMatrix();
     for(int i=0;i<cameraList.size();i++)
     {
         initial(cameraList[i] * originalMV, glWidget->getProjMatrix());
-        if(!(i % 100))
+        if(!((i + 1) % 50))
         {
-            messageWidget->appendPlainText("vpRecommendation sample points " + QString::number(i));
+            messageWidget->appendPlainText("vpRecommendation sample points " + QString::number(i+1));
             messageWidget->repaint();
         }
 //            std::cout << "vpRecommendation .... " << i << std::endl;
