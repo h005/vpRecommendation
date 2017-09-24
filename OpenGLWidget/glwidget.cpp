@@ -401,8 +401,7 @@ void GLWidget::setVpRecommendationMatrix(glm::mat4 &vpRecommendationMatrix)
     this->vpRecommendationMatrix = vpRecommendationMatrix;
 }
 
-void GLWidget::setRecommendationLocationsPos(std::vector<glm::vec2> &vpRcameraLocations,
-                                          float sceneZ,
+void GLWidget::setRecommendationLocationsPos(std::vector<glm::vec3> &vpRcameraLocations,
                                           std::vector<int> &index)
 {
     vpRcameraLocationsPos.clear();
@@ -410,21 +409,20 @@ void GLWidget::setRecommendationLocationsPos(std::vector<glm::vec2> &vpRcameraLo
 //    this->vpRcameraLocations = vpRcameraLocations;
     for(int i=0;i<index.size();i++)
     {
-        glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,sceneZ,1.0);
+        glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,vpRcameraLocations[index[i]].z, 1.0);
         pos = glm::inverse(shift_scale) * pos;
         this->vpRcameraLocationsPos.push_back(glm::vec3(pos.x, pos.y, pos.z));
     }
 }
 
-void GLWidget::setRecommendationLocationsNeg(std::vector<glm::vec2> &vpRcameraLocations,
-                                             float sceneZ,
+void GLWidget::setRecommendationLocationsNeg(std::vector<glm::vec3> &vpRcameraLocations,
                                              std::vector<int> &index)
 {
     vpRcameraLocationsNeg.clear();
     glm::mat4 shift_scale = getOriginalMatrix();
     for(int i=0;i<index.size();i++)
     {
-        glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,sceneZ,1.0);
+        glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,vpRcameraLocations[index[i]].z,1.0);
         pos = glm::inverse(shift_scale) * pos;
         this->vpRcameraLocationsNeg.push_back(glm::vec3(pos.x, pos.y, pos.z));
     }

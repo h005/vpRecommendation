@@ -36,11 +36,9 @@ public:
 
     // fill in the modelView and projection matrix
     void initial(glm::mat4 modelView, glm::mat4 projection);
-    void setRecommendationLocationsPos(std::vector<glm::vec2> &vpRcameraLocations,
-                                    float sceneZ,
+    void setRecommendationLocationsPos(std::vector<glm::vec3> &vpRcameraLocations,
                                     std::vector<int> &index);
-    void setRecommendationLocationsNeg(std::vector<glm::vec2> &vpRcameraLocations,
-                                    float sceneZ,
+    void setRecommendationLocationsNeg(std::vector<glm::vec3> &vpRcameraLocations,
                                     std::vector<int> &index);
 
     // render the image

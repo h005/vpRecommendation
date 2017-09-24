@@ -46,18 +46,16 @@ void FeaGeo::initial(glm::mat4 modelView, glm::mat4 projection)
     //    std::cout << modelview.
 }
 
-void FeaGeo::setRecommendationLocationsPos(std::vector<glm::vec2> &vpRcameraLocations,
-                                           float sceneZ,
+void FeaGeo::setRecommendationLocationsPos(std::vector<glm::vec3> &vpRcameraLocations,
                                            std::vector<int> &index)
 {
-    glWidget->setRecommendationLocationsPos(vpRcameraLocations, sceneZ, index);
+    glWidget->setRecommendationLocationsPos(vpRcameraLocations, index);
 }
 
-void FeaGeo::setRecommendationLocationsNeg(std::vector<glm::vec2> &vpRcameraLocations,
-                                           float sceneZ,
+void FeaGeo::setRecommendationLocationsNeg(std::vector<glm::vec3> &vpRcameraLocations,
                                            std::vector<int> &index)
 {
-    glWidget->setRecommendationLocationsNeg(vpRcameraLocations, sceneZ, index);
+    glWidget->setRecommendationLocationsNeg(vpRcameraLocations, index);
 }
 
 void FeaGeo::render()

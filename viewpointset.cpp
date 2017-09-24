@@ -29,9 +29,11 @@ void ViewPointSet::setFeatures(GLWidget *glWidget, int knowAxis)
     {
         for(int i=0;i<cameraPos.size();i++)
         {
-            glm::vec4 pos = glm::vec4(cameraPos[i].x, cameraPos[i].y, sceneZ, 1.0);
+            glm::vec4 pos = glm::vec4(cameraPos[i].x, cameraPos[i].y, cameraPos[i].z, 1.0);
             pos = rectifyMatrix * pos;
-//            cameraPos[i].x = pos
+            cameraPos[i].x = pos.x;
+            cameraPos[i].y = pos.y;
+            cameraPos[i].z = pos.z;
         }
     }
     setGLWidget(glWidget);
@@ -43,7 +45,7 @@ void ViewPointSet::copyGeoFeatureTo(cv::Mat &geoFea)
     geoFeatures.copyTo(geoFea);
 }
 
-std::vector<glm::vec2> &ViewPointSet::getCameraPos()
+std::vector<glm::vec3> &ViewPointSet::getCameraPos()
 {
     return cameraPos;
 }
@@ -58,7 +60,7 @@ void ViewPointSet::genMVMatrix(std::vector<glm::mat4> &mvList)
 //    std::cout << "vppoint sample sceneZ " << sceneZ << std::endl;
     for(int i=0;i<cameraPos.size();i++)
     {
-        glm::mat4 mv = glm::lookAt(glm::vec3(cameraPos[i].x, cameraPos[i].y, sceneZ),
+        glm::mat4 mv = glm::lookAt(glm::vec3(cameraPos[i].x, cameraPos[i].y, cameraPos[i].z),
                                    glm::vec3(0.f,0.f,0.f),
                                    glm::vec3(0.f,0.f,1.f));
         mvList.push_back(mv);
@@ -97,7 +99,7 @@ void ViewPointSet::camPosSample()
           tmpTheta = tmpTheta * theta + biasTheta;
           float tmpx = r * cos(tmpTheta);
           float tmpy = r * sin(tmpTheta);
-          cameraPos.push_back(glm::vec2(tmpx, tmpy));
+          cameraPos.push_back(glm::vec3(tmpx, tmpy, sceneZ));
       }
 
 }
@@ -128,8 +130,8 @@ void ViewPointSet::setRecommendationLocations(cv::Mat &score)
         indexNeg.push_back(indexScore.at<int>(score.rows - i - 1, 0));
 //    for(int i=0;i<numsCamera;i++)
 //        std::cout << "cameraIndex " << index[i] << " " << indexNeg[i] << std::endl;
-    feaGeo->setRecommendationLocationsPos(cameraPos, sceneZ, index);
-    feaGeo->setRecommendationLocationsNeg(cameraPos, sceneZ, indexNeg);
+    feaGeo->setRecommendationLocationsPos(cameraPos, index);
+    feaGeo->setRecommendationLocationsNeg(cameraPos, indexNeg);
 
 //    for(int i=0;i<score.rows;i++)
     //        std::cout << score.at<double>(i,0) << " " << indexScore.at<int>(i,0) << std::endl;
@@ -155,7 +157,7 @@ void ViewPointSet::setRecommendationLocationsWithRatio(cv::Mat &score)
             index.push_back(indexScore.at<int>(i + base, 0));
     }
 
-    feaGeo->setRecommendationLocationsPos(cameraPos, sceneZ, index);
+    feaGeo->setRecommendationLocationsPos(cameraPos, index);
 }
 
 void ViewPointSet::printScore(cv::Mat &score)
