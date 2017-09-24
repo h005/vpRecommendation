@@ -12,11 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    ui->scrollArea->resize(QSize(630,1000));
-//    ui->scrollArea->setSizePolicy();
-
-    // set the background color
-//    setStyleSheet("background-color:rgb(225,255,255);");
     setStyleSheet("background-color:rgb(75,75,75);");
 
     setUpUiStyle();
@@ -39,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // set feaGeo to NULL pointer
     feaGeo = NULL;
     messageWidget = ui->plainTextEdit;
+
+    // initial sfm
+    sfm = new SfMContainer();
 }
 
 MainWindow::~MainWindow()
@@ -139,19 +137,19 @@ void MainWindow::on_importModel_clicked()
     QString modelFile = QFileDialog::getOpenFileName(this,
                                              QString("Load 3D model"),
                                              QString("/home/hejw005/Documents/learning/QtProject/vpRecommendation/data/models/"),
-                                             QString("Image Files(*.ply *.off *.obj)"),
+                                             QString("Image Files(*.off *.obj)"),
                                              nullptr,
                                              QFileDialog::DontUseNativeDialog);
 
 //    qDebug() << "modelFile " << modelFile << endl;
-    messageWidget->appendPlainText(modelFile + " is loaded.");
+    messageWidget->appendPlainText(modelFile + " loading");
 
     if(modelFile == "")
     {
         statusBar()->showMessage("no selected model");
         return;
     }
-    statusBar()->showMessage(modelFile + " loaded");
+    statusBar()->showMessage(modelFile + " loading");
 
     glWidget = new GLWidget(modelFile);
     QSurfaceFormat format;
@@ -161,6 +159,8 @@ void MainWindow::on_importModel_clicked()
     format.setProfile(QSurfaceFormat::CoreProfile);
     glWidget->setFormat(format);
     setGLWidget();
+    messageWidget->appendPlainText(modelFile + " is loaded");
+    statusBar()->showMessage(modelFile + " is loaded");
 }
 
 void MainWindow::on_recommend_clicked()
@@ -259,4 +259,31 @@ void MainWindow::on_Clear_clicked()
 //    std::cout << "clear done" << std::endl;
     messageWidget->clear();
     statusBar()->showMessage("clear done");
+}
+
+void MainWindow::on_sfm_imgFolder_clicked()
+{
+    QString imgFolder = QFileDialog::getExistingDirectory(this,
+                                                          QString("select the image folder"),
+                                                          QString());
+//    qDebug() << imgFolder << endl;
+//    sfm->setImgFolder();
+}
+
+void MainWindow::on_sfm_outputFolder_clicked()
+{
+    QString outputFolder = QFileDialog::getExistingDirectory(this,
+                                                             QString("select the output folder"),
+                                                             QString());
+//    sfm->setOutputFolder();
+}
+
+void MainWindow::on_SfM_clicked()
+{
+    sfm->sfm_imgs2ptModel();
+}
+
+void MainWindow::on_sfm_pt2mesh_clicked()
+{
+    sfm->sfm_pt2MeshModel();
 }

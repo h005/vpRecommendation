@@ -60,8 +60,8 @@ GLWidget::GLWidget(const QString &modelPath, QWidget *parent)
       m_sphereProgramID(0)
 {
     model.load(modelPath.toLocal8Bit().data());
-    cameraModelPos.load("/home/hejw005/Documents/vpProject/myViewpoint/hellogl2/camera/camera2.obj");
-    cameraModelNeg.load("/home/hejw005/Documents/vpProject/myViewpoint/hellogl2/camera/camera3.obj");
+    cameraModelPos.load("./camera/camera2.obj");
+    cameraModelNeg.load("./camera/camera3.obj");
     std::pair<GLfloat, glm::mat4> scaleAndShift = model.recommandScaleAndShift();
     m_scaleBeforeRender = scaleAndShift.first;
     m_shiftBeforeRender = scaleAndShift.second;

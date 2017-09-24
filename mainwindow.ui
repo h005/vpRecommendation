@@ -68,9 +68,30 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="sfm_imgFolder">
+        <property name="text">
+         <string>imgs Folder</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="sfm_outputFolder">
+        <property name="text">
+         <string>output Folder</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="SfM">
         <property name="text">
          <string>SfM</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="sfm_pt2mesh">
+        <property name="text">
+         <string>pt2mesh</string>
         </property>
        </widget>
       </item>

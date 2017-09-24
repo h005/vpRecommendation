@@ -48,7 +48,8 @@ SOURCES += \
     RenderObject/pointsmatchrelation.cpp \
     features/feageo.cpp \
     svm2k/predictor.cpp \
-    viewpointset.cpp
+    viewpointset.cpp \
+    SfM/sfmcontainer.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -74,7 +75,8 @@ HEADERS += \
     RenderObject/pointsmatchrelation.h \
     features/feageo.h \
     svm2k/predictor.h \
-    viewpointset.h
+    viewpointset.h \
+    SfM/sfmcontainer.h
 
 DISTFILES += \
     shader/simple.vert \
@@ -147,3 +149,9 @@ LIBS += /usr/local/lib/libopencv_aruco.so.3.2 \
 RESOURCES += \
     shaders.qrc \
     svm2kdata.qrc
+
+
+# glm
+# sudo apt-get install libglm-dev
+# glew
+# sudo apt-get install libglew-dev
