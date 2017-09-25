@@ -41,7 +41,7 @@ public:
 
     void copyGeoFeatureTo(cv::Mat &geoFea);
 
-    std::vector<glm::vec2>& getCameraPos();
+    std::vector<glm::vec3>& getCameraPos();
 
     float getSceneZ();
 
@@ -87,7 +87,7 @@ private:
 
     glm::mat4 rectifyMatrix;
 
-    std::vector<glm::vec2> cameraPos;
+    std::vector<glm::vec3> cameraPos;
     std::vector<glm::mat4> mvList;
 
 };

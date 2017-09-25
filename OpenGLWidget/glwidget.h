@@ -73,12 +73,10 @@ public:
 
     void setVpRecommendationMatrix(glm::mat4 &vpRecommendationMatrix);
 
-    void setRecommendationLocationsPos(std::vector<glm::vec2> &vpRcameraLocations,
-                                       float sceneZ,
+    void setRecommendationLocationsPos(std::vector<glm::vec3> &vpRcameraLocations,
                                        std::vector<int> &index);
 
-    void setRecommendationLocationsNeg(std::vector<glm::vec2> &vpRcameraLocations,
-                                       float sceneZ,
+    void setRecommendationLocationsNeg(std::vector<glm::vec3> &vpRcameraLocations,
                                        std::vector<int> &index);
 
     void clearVpRcameraLocations();
