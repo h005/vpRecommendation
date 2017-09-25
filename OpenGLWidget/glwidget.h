@@ -83,8 +83,9 @@ public:
 
     void clearVpRcameraLocations();
 
-//    glm::mat4 getMMatrix();
+    glm::mat4 getNowMatrix();
     glm::mat4 getOriginalMatrix();
+    glm::mat4 getNowModelMatrix();
     glm::mat4 getMVMatrix();
     // projection matrix
     glm::mat4 getProjMatrix();

@@ -8,6 +8,7 @@
 #include "OpenGLWidget/glwidget.h"
 #include "OpenGLWidget/myglwidget.h"
 #include "features/feageo.h"
+#include "SfM/sfmcontainer.h"
 #include "viewpointset.h"
 
 namespace Ui {
@@ -21,7 +22,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
 private slots:
     void on_Quit_clicked();
 
@@ -37,10 +37,26 @@ private slots:
 
     void on_Clear_clicked();
 
+    void on_sfm_imgFolder_clicked();
+
+    void on_sfm_outputFolder_clicked();
+
+    void on_SfM_clicked();
+
+    void on_sfm_pt2mesh_clicked();
+
+    void on_sfmClean_clicked();
+
+    void on_cleanLog_clicked();
+
+    void on_recommendKnowAxis_clicked();
+
 private:
     void imageQualityAssessment();
 
-    void viewpointQualityAssessment();
+    // knowAxis 1 means we know the axis
+    // knwoAxis 0 means we do not know the axis
+    void viewpointQualityAssessment(int knowAxis);
 
     void setUpUiStyle();
 
@@ -51,13 +67,12 @@ private:
 private:
     Ui::MainWindow *ui;
     QGridLayout *mainWidgetLayout;
-//    ImgLabel *imgLabel;
-//    ImgLabel **imglabels;
 
     ImgSet *imgSet;
     ViewPointSet *vpSet;
     FeaGeo *feaGeo;
     GLWidget *glWidget;
+    SfMContainer *sfm;
 
     // setup UI
     void setImgLabels();
