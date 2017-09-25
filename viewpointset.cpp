@@ -6,7 +6,7 @@
 
 ViewPointSet::ViewPointSet()
 {
-    sceneZ = -1.0;
+    sceneZ = -0.8;
     N_sample = 500;
     feaGeo = NULL;
     m_features = 18;

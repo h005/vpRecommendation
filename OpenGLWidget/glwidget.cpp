@@ -486,6 +486,8 @@ void GLWidget::setParameters(std::vector<GLfloat> &vertice,
                                           glm::vec4 &p_model_z,
                                           int &p_outsidePointsNum)
 {
+    vertice.clear();
+    indices.clear();
     std::vector<GLuint> p_VisibleFaces;
     p_VisibleFaces.clear();
 //    glm::vec4 p_model_x;
@@ -610,5 +612,9 @@ void GLWidget::setParameters(std::vector<GLfloat> &vertice,
         }
 
     doneCurrent();
+    std::vector<GLuint>().swap(p_VisibleFaces);
+    std::vector<bool>().swap(p_isVertexVisible);
+    std::vector<GLfloat>().swap(p_vertices);
+    delete p_img;
 }
 

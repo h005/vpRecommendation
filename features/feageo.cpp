@@ -130,6 +130,12 @@ void FeaGeo::setViewpointEntropy()
     double totalArea = img.cols * img.rows;
     for(int i=0;i<face.size();i+=3)
     {
+        if(vertice.size() <= face[i] * 3)
+            continue;
+        if(vertice.size() <= face[i+1] * 3)
+            continue;
+        if(vertice.size() <= face[i+2] * 3)
+            continue;
         CvPoint2D64f a = cvPoint2D64f(vertice[face[i]*3],vertice[face[i]*3+1]);
         CvPoint2D64f b = cvPoint2D64f(vertice[face[i+1]*3],vertice[face[i+1]*3+1]);
         CvPoint2D64f c = cvPoint2D64f(vertice[face[i+2]*3],vertice[face[i+2]*3+1]);

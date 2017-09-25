@@ -202,6 +202,11 @@ void MainWindow::imageQualityAssessment()
 
 void MainWindow::viewpointQualityAssessment(int knowAxis)
 {
+    if(!glWidget)
+    {
+        std::cout << "please input the model first" << std::endl;
+        return;
+    }
     if(vpSet)
         delete vpSet;
     vpSet = new ViewPointSet();
