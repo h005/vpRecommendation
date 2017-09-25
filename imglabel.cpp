@@ -5,7 +5,7 @@ ImgLabel::ImgLabel(QWidget *parent) :
     QLabel(parent)
 {
     img = NULL;
-    setStyleSheet("background-color:rgb(176,196,222);");
+    setStyleSheet("background-color:rgb(75,75,75);");
 }
 
 ImgLabel::~ImgLabel()
@@ -58,17 +58,8 @@ void ImgLabel::resizeEvent(QResizeEvent *event)
 
 QSize ImgLabel::sizeHint()
 {
-    return QSize(480,320);
-}
-
-void ImgLabel::setBackground()
-{
-//    QPixmap backGround(this->width(),this->height());
-////    qDebug() << this->width() << " " << this->height() << endl;
-//    backGround.fill(Qt::black);
-//    this->setPixmap(backGround);
-//    update();
-
+    return QSize(360,240);
+//    return QSize(240, 360);
 }
 
 void ImgLabel::clean()

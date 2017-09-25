@@ -13,6 +13,11 @@ ViewPointSet::ViewPointSet()
     geoFeatures.create(N_sample,m_features,CV_64FC1);
 }
 
+ViewPointSet::~ViewPointSet()
+{
+
+}
+
 void ViewPointSet::setViewpoints()
 {
     camPosSample();

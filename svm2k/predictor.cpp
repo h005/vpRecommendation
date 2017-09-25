@@ -67,16 +67,10 @@ void Predictor::feaNormalization(cv::Mat &fea, cv::Mat& scalePara)
     for(int i=0;i<fea.rows;i++)
         for(int j=0;j<fea.cols;j++)
         {
-//            std::cout << scalePara.at<double>(j,0) << " "
-//                      << scalePara.at<double>(j,1) << " "
-//                      << scalePara.at<double>(j,2) << " "
-//                      << scalePara.at<double>(j,3) << " "
-//                      << fea.at<double>(i,j) << std::endl;
             fea.at<double>(i,j) = (scalePara.at<double>(j,3) - scalePara.at<double>(j,2)) \
                     * (fea.at<double>(i,j) - scalePara.at<double>(j,0)) \
                     / (scalePara.at<double>(j,1) - scalePara.at<double>(j,0)) \
                     + scalePara.at<double>(j,2);
-//            std::cout << fea.at<double>(i,j) << std::endl;
         }
 }
 
@@ -89,8 +83,8 @@ void Predictor::predictLabelWithViewId(cv::Mat &label, int viewId)
 {
     cv::Mat score;
     predictScore(score, viewId);
-    for(int i=0;i<score.rows;i++)
-        std::cout << "score " << score.at<double>(i,0) << std::endl;
+//    for(int i=0;i<score.rows;i++)
+//        std::cout << "score " << score.at<double>(i,0) << std::endl;
     // convert the score to label
     assert(!(XTest1.rows % 2));
     label.create(score.rows,score.cols,CV_8SC1);

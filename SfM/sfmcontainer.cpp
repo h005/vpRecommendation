@@ -8,10 +8,11 @@ extern QPlainTextEdit *messageWidget;
 
 SfMContainer::SfMContainer()
 {
-    imgFolder = "/home/hejw005/Documents/samSung/sfmTest/imgs";
-    outputFolder = "/home/hejw005/Documents/samSung/sfmTest/result";
-
-    basePath = "/home/hejw005/Documents/samSung/sfmTools";
+//    imgFolder = "/home/h005/Documents/samSung/sfmTest/imgs";
+//    outputFolder = "/home/h005/Documents/samSung/sfmTest/result";
+    imgFolder = "";
+    outputFolder = "";
+    basePath = "sfmTools";
 
     cameraDatabase = basePath + "/sensor_width_camera_database.txt";
 
@@ -286,6 +287,8 @@ void SfMContainer::perform_openMVG_main_IncrementalSfM(int exitCode,
 ///
 void SfMContainer::pt2MeshModel(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    QString message;
+    QByteArray msg;
 //    QStringList arguments;
 //    perform_openMVG_main_openMVG2openMVS(arguments);
 //    perform_openMVS_DensifyPointCloud(arguments);
@@ -307,6 +310,8 @@ void SfMContainer::pt2MeshModel(int exitCode, QProcess::ExitStatus exitStatus)
             openMVS_pipLineStep++;
             break;
         case openMVS_ReconstructMesh_Pipline:
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("done");
             messageWidget->appendPlainText("perform_openMVS_ReconstructMesh ...");
             perform_openMVS_ReconstructMesh(exitCode, exitStatus);
@@ -335,20 +340,32 @@ void SfMContainer::pt2MeshModel(int exitCode, QProcess::ExitStatus exitStatus)
     }
     else
     {
-        switch (openMVG_pipLineStep) {
+        switch (openMVS_pipLineStep) {
         case openMVS_DensifyPointCloud_Pipline:
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("perform_openMVG_main_openMVG2openMVS error");
             break;
         case openMVS_ReconstructMesh_Pipline:
+//            message = myProcess->readAll();
+//            msg = myProcess->readAllStandardOutput();
+//            std::cout << message.toStdString() << std::endl;
+//            std::cout <<"msg " << msg.toStdString() << std::endl;
             messageWidget->appendPlainText("perform_openMVS_DensifyPointCloud error");
             break;
         case openMVS_RefineMesh_Pipline:
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("perform_openMVS_ReconstructMesh error");
             break;
         case openMVS_TextureMesh_Pipline:
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("perform_openMVS_RefineMesh error");
             break;
         default:
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("perform_openMVS_TextureMesh error");
             break;
         }
@@ -376,7 +393,15 @@ void SfMContainer::perform_openMVS_DensifyPointCloud(int exitCode,
     arguments.clear();
     arguments << outputFolder + "/reconstruction/scene.mvs";
 
+    std::cout << "DensifyPointCloud "<< DensifyPointCloud.toStdString() << std::endl;
+    std::cout << "arguments " << std::endl;
+    for(int i =0 ;i< arguments.size();i++)
+    {
+        std::cout << arguments[i].toStdString() << std::endl;
+    }
+
     myProcess->start(DensifyPointCloud, arguments);
+
 }
 
 void SfMContainer::perform_openMVS_ReconstructMesh(int exitCode,

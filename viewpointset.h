@@ -32,6 +32,7 @@ class ViewPointSet
 {
 public:
     ViewPointSet();
+    ~ViewPointSet();
 
     void setViewpoints();
 

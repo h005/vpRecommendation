@@ -6,7 +6,6 @@
 #include <QFileDialog>
 #include "imgset.h"
 #include "OpenGLWidget/glwidget.h"
-#include "OpenGLWidget/myglwidget.h"
 #include "features/feageo.h"
 #include "SfM/sfmcontainer.h"
 #include "viewpointset.h"
@@ -33,7 +32,7 @@ private slots:
 
     void on_recommend_clicked();
 
-    void on_assessModel_clicked();
+//    void on_assessModel_clicked();
 
     void on_Clear_clicked();
 

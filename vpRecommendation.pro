@@ -37,11 +37,11 @@ SOURCES += \
     features/gistFeature/standalone_image.cpp \
     features/gistFeature/libgist.cpp \
     OpenGLWidget/dragablewidget.cpp \
-    OpenGLWidget/myglwidget.cpp \
+#    OpenGLWidget/myglwidget.cpp \
     OpenGLWidget/trackball.cpp \
     OpenGLWidget/glwidget.cpp \
     OpenGLWidget/shader.cpp \
-    RenderObject/mesh.cpp \
+#    RenderObject/mesh.cpp \
     RenderObject/GModel.cpp \
     RenderObject/sphere.cpp \
     RenderObject/baserenderobject.cpp \
@@ -64,11 +64,11 @@ HEADERS += \
     features/gistFeature/libgist.h \
     features/gistFeature/clany/clany_defs.h \
     OpenGLWidget/dragablewidget.h \
-    OpenGLWidget/myglwidget.h \
+#    OpenGLWidget/myglwidget.h \
     OpenGLWidget/trackball.h \
     OpenGLWidget/glwidget.h \
     OpenGLWidget/shader.hpp \
-    RenderObject/mesh.h \
+#    RenderObject/mesh.h \
     RenderObject/GModel.h \
     RenderObject/sphere.h \
     RenderObject/baserenderobject.h \
@@ -102,52 +102,14 @@ INCLUDEPATH += /usr/local/include \
                 /usr/local/include/opencv \
                 /usr/local/include/opencv2 \
 
-LIBS += /usr/local/lib/libopencv_aruco.so.3.2 \
-        /usr/local/lib/libopencv_bgsegm.so.3.2 \
-        /usr/local/lib/libopencv_bioinspired.so.3.2 \
-        /usr/local/lib/libopencv_calib3d.so.3.2 \
-        /usr/local/lib/libopencv_ccalib.so.3.2 \
-        /usr/local/lib/libopencv_core.so.3.2 \
-        /usr/local/lib/libopencv_datasets.so.3.2 \
-        /usr/local/lib/libopencv_dnn.so.3.2 \
-        /usr/local/lib/libopencv_dpm.so.3.2 \
-        /usr/local/lib/libopencv_face.so.3.2 \
-        /usr/local/lib/libopencv_features2d.so.3.2 \
-        /usr/local/lib/libopencv_flann.so.3.2 \
-        /usr/local/lib/libopencv_fuzzy.so.3.2 \
-        /usr/local/lib/libopencv_hdf.so.3.2 \
-        /usr/local/lib/libopencv_highgui.so.3.2 \
-        /usr/local/lib/libopencv_imgcodecs.so.3.2 \
-        /usr/local/lib/libopencv_imgproc.so.3.2 \
-        /usr/local/lib/libopencv_line_descriptor.so.3.2 \
-        /usr/local/lib/libopencv_ml.so.3.2 \
-        /usr/local/lib/libopencv_objdetect.so.3.2 \
-        /usr/local/lib/libopencv_optflow.so.3.2 \
-        /usr/local/lib/libopencv_photo.so.3.2 \
-        /usr/local/lib/libopencv_plot.so.3.2 \
-        /usr/local/lib/libopencv_reg.so.3.2 \
-        /usr/local/lib/libopencv_rgbd.so.3.2 \
-        /usr/local/lib/libopencv_saliency.so.3.2 \
-#        /usr/local/lib/libopencv_sfm.so.3.2 \
-        /usr/local/lib/libopencv_shape.so.3.2 \
-        /usr/local/lib/libopencv_stereo.so.3.2 \
-        /usr/local/lib/libopencv_stitching.so.3.2 \
-        /usr/local/lib/libopencv_structured_light.so.3.2 \
-        /usr/local/lib/libopencv_superres.so.3.2 \
-        /usr/local/lib/libopencv_surface_matching.so.3.2 \
-        /usr/local/lib/libopencv_text.so.3.2 \
-        /usr/local/lib/libopencv_tracking.so.3.2 \
-        /usr/local/lib/libopencv_videoio.so.3.2 \
-        /usr/local/lib/libopencv_video.so.3.2 \
-        /usr/local/lib/libopencv_videostab.so.3.2 \
-        /usr/local/lib/libopencv_viz.so.3.2 \
-        /usr/local/lib/libopencv_xfeatures2d.so.3.2 \
-        /usr/local/lib/libopencv_ximgproc.so.3.2 \
-        /usr/local/lib/libopencv_xobjdetect.so.3.2 \
-        /usr/local/lib/libopencv_xphoto.so.3.2
+LIBS +=     /usr/local/lib/libopencv_core.so.3.2 \
+            /usr/local/lib/libopencv_highgui.so.3.2 \
+            /usr/local/lib/libopencv_imgcodecs.so.3.2 \
+            /usr/local/lib/libopencv_imgproc.so.3.2 \
+            /usr/local/lib/libopencv_objdetect.so.3.2 \
+            /usr/local/lib/libopencv_saliency.so.3.2 \
 
 RESOURCES += \
-    shaders.qrc \
     svm2kdata.qrc
 
 

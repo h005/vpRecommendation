@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // setup the imgSet
     imgSet = new ImgSet();
     // setup the vpSet
-    vpSet = new ViewPointSet();
+    vpSet = NULL;
 
     glWidget = NULL;
 
@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // set feaGeo to NULL pointer
     feaGeo = NULL;
     messageWidget = ui->plainTextEdit;
+    messageWidget->document()->setPlainText("");
 
     // initial sfm
     sfm = new SfMContainer();
@@ -46,6 +47,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_Quit_clicked()
 {
+    on_Clear_clicked();
+    delete sfm;
     this->close();
 }
 
@@ -86,8 +89,8 @@ void MainWindow::on_importImgs_clicked()
 
 void MainWindow::setImgLabels()
 {
-    int minColWidth = 300;
-    int minRowHeigth = 225;
+    int minColWidth = 360;
+    int minRowHeigth = 240;
     int numImgs = imgSet->size();
     int rows = numImgs / 2;
     // fill the images in the girds
@@ -112,7 +115,8 @@ void MainWindow::setImgLabels()
 
     ui->mainWidget->setLayout(mainWidgetLayout);
 //    qDebug() << "set Background done" << endl;
-    messageWidget->document()->setPlainText("load the images");
+//    messageWidget->document()->setPlainText("load the images");
+    messageWidget->appendPlainText("load the images");
 }
 
 
@@ -176,11 +180,11 @@ void MainWindow::on_recommend_clicked()
     statusBar()->showMessage("");
 }
 
-void MainWindow::on_assessModel_clicked()
-{
-    feaGeo = new FeaGeo(this->glWidget);
-    feaGeo->extractFeaturesPipline();
-}
+//void MainWindow::on_assessModel_clicked()
+//{
+//    feaGeo = new FeaGeo(this->glWidget);
+//    feaGeo->extractFeaturesPipline();
+//}
 
 void MainWindow::imageQualityAssessment()
 {
@@ -198,6 +202,9 @@ void MainWindow::imageQualityAssessment()
 
 void MainWindow::viewpointQualityAssessment(int knowAxis)
 {
+    if(vpSet)
+        delete vpSet;
+    vpSet = new ViewPointSet();
     vpSet->setFeatures(glWidget,knowAxis);
     Predictor *predictor = new Predictor();
     // set geo features ie 3D features ie XTest2
@@ -253,9 +260,20 @@ void MainWindow::cleanImgSet()
 void MainWindow::cleanVpSet()
 {
     if(glWidget)
+    {
         delete glWidget;
+        glWidget = NULL;
+    }
     if(feaGeo)
+    {
         delete feaGeo;
+        feaGeo = NULL;
+    }
+    if(vpSet)
+    {
+        delete vpSet;
+        vpSet = NULL;
+    }
 
 }
 
@@ -264,7 +282,7 @@ void MainWindow::on_Clear_clicked()
     cleanImgSet();
     cleanVpSet();
 //    std::cout << "clear done" << std::endl;
-    messageWidget->clear();
+//    messageWidget->clear();
     statusBar()->showMessage("clear done");
 }
 
@@ -273,8 +291,9 @@ void MainWindow::on_sfm_imgFolder_clicked()
     QString imgFolder = QFileDialog::getExistingDirectory(this,
                                                           QString("select the image folder"),
                                                           QString());
-//    qDebug() << imgFolder << endl;
-//    sfm->setImgFolder();
+    messageWidget->appendPlainText("sfm select the imgFolder:");
+    messageWidget->appendPlainText(imgFolder);
+    sfm->setImgFolder(imgFolder);
 }
 
 void MainWindow::on_sfm_outputFolder_clicked()
@@ -282,7 +301,9 @@ void MainWindow::on_sfm_outputFolder_clicked()
     QString outputFolder = QFileDialog::getExistingDirectory(this,
                                                              QString("select the output folder"),
                                                              QString());
-//    sfm->setOutputFolder();
+    messageWidget->appendPlainText("sfm select the outputFolder:");
+    messageWidget->appendPlainText(outputFolder);
+    sfm->setOutputFolder(outputFolder);
 }
 
 void MainWindow::on_SfM_clicked()

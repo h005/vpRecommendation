@@ -21,8 +21,6 @@ public:
     void resizeEvent(QResizeEvent *event);
     QSize sizeHint();
 
-    void setBackground();
-
 private:
     void clean();
 
