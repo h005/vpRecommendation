@@ -1,11 +1,13 @@
 #include "imglabel.h"
 #include <QDebug>
+#include <QPainter>
 
 ImgLabel::ImgLabel(QWidget *parent) :
     QLabel(parent)
 {
     img = NULL;
     setStyleSheet("background-color:rgb(75,75,75);");
+    flagPosNeg = 0;
 }
 
 ImgLabel::~ImgLabel()
@@ -37,6 +39,27 @@ void ImgLabel::mouseReleaseEvent(QMouseEvent *event)
 void ImgLabel::paintEvent(QPaintEvent *event)
 {
     QLabel::paintEvent(event);
+    if(flagPosNeg == 1)
+    {
+        QPainter *painter = new QPainter(this);
+        painter->setPen(QPen(Qt::red,5));
+        painter->drawRect(0, 0, this->width(), this->height());
+        delete painter;
+    }
+    else if(flagPosNeg == -1)
+    {
+        QPainter *painter = new QPainter(this);
+        painter->setPen(QPen(Qt::green,5));
+        painter->drawRect(0, 0, this->width(), this->height());
+        delete painter;
+    }
+
+}
+
+void ImgLabel::setFlagPosNeg(int flagPosNeg)
+{
+    this->flagPosNeg = flagPosNeg;
+    update();
 }
 
 void ImgLabel::resizeEvent(QResizeEvent *event)

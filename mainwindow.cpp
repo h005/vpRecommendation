@@ -196,6 +196,7 @@ void MainWindow::imageQualityAssessment()
     predictor->setImgFeatures(imgSet);
     cv::Mat label;
     predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
+    imgSet->setFlagPosNeg(label);
     imgSet->printLabel(label);
     delete predictor;
 }

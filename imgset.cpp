@@ -108,3 +108,9 @@ void ImgSet::clean()
 
     imgFiles.clear();
 }
+
+void ImgSet::setFlagPosNeg(cv::Mat &label)
+{
+    for(int i=0;i<imgFiles.size();i++)
+        imgLabels[i]->setFlagPosNeg((int)label.at<char>(i,0));
+}

@@ -32,6 +32,8 @@ public:
 
     void clean();
 
+    void setFlagPosNeg(cv::Mat &label);
+
 private:
     QStringList imgFiles;
     ImgLabel **imgLabels;

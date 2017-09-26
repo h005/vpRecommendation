@@ -18,6 +18,8 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
 
+    void setFlagPosNeg(int flagPosNeg);
+
     void resizeEvent(QResizeEvent *event);
     QSize sizeHint();
 
@@ -27,6 +29,8 @@ private:
 private:
 
     QPixmap *img;
+
+    int flagPosNeg;
 
 };
 
