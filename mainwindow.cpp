@@ -238,7 +238,7 @@ void MainWindow::setUpUiStyle()
     ui->sfm_pt2mesh->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->sfmClean->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->cleanLog->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
-    ui->recommendKnowAxis->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+//    ui->recommendKnowAxis->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
 
     ui->plainTextEdit->setStyleSheet("QPlainTextEdit{color:white;background:rgb(35,35,35)}");
 
