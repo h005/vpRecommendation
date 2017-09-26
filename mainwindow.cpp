@@ -117,6 +117,8 @@ void MainWindow::setImgLabels()
 //    qDebug() << "set Background done" << endl;
 //    messageWidget->document()->setPlainText("load the images");
     messageWidget->appendPlainText("load the images");
+    update();
+    std::cout << "load images done " << std::endl;
 }
 
 
