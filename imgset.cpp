@@ -96,6 +96,20 @@ void ImgSet::printLabel(cv::Mat &label)
     }
 }
 
+void ImgSet::printScore(cv::Mat &score)
+{
+    QFileInfo *file = new QFileInfo();
+    for(int i=0;i<imgFiles.size();i+=2)
+    {
+        file->setFile(imgFiles[i]);
+        messageWidget->appendPlainText(file->fileName() + "    " + QString::number((double)score.at<double>(i,0),'g',4));
+        file->setFile(imgFiles[i+1]);
+        messageWidget->appendPlainText(file->fileName() + "    " + QString::number((double)score.at<double>(i+1,0),'g',4));
+        messageWidget->appendPlainText("");
+//        std::cout << (double)score.at<double>(i,0) << " " << (double)score.at<double>(i+1,0) << std::endl;
+    }
+}
+
 void ImgSet::clean()
 {
 

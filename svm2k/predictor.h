@@ -24,6 +24,8 @@ public:
     void predictScoreWithViewId(cv::Mat &score, int viewId);
     void predictLabelWithViewId(cv::Mat &label, int viewId);
 
+    void score2Label(cv::Mat &label, cv::Mat &score);
+
 
 private:
     // viewId can be view1, view2 and view1 + view2

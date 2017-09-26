@@ -83,8 +83,12 @@ void Predictor::predictLabelWithViewId(cv::Mat &label, int viewId)
 {
     cv::Mat score;
     predictScore(score, viewId);
-//    for(int i=0;i<score.rows;i++)
-//        std::cout << "score " << score.at<double>(i,0) << std::endl;
+    score2Label(label, score);
+    score.release();
+}
+
+void Predictor::score2Label(cv::Mat &label, cv::Mat &score)
+{
     // convert the score to label
     assert(!(XTest1.rows % 2));
     label.create(score.rows,score.cols,CV_8SC1);
@@ -102,7 +106,6 @@ void Predictor::predictLabelWithViewId(cv::Mat &label, int viewId)
                 label.at<char>(i+1,j) = -1;
             }
         }
-    score.release();
 }
 
 void Predictor::predictScore(cv::Mat &score, int viewId)

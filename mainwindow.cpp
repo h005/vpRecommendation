@@ -195,9 +195,15 @@ void MainWindow::imageQualityAssessment()
     // set img features ie 2D features ie XTest1
     predictor->setImgFeatures(imgSet);
     cv::Mat label;
-    predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
+    cv::Mat score;
+    // these two sentences is equals to call predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
+    predictor->predictScoreWithViewId(score, Predictor::ViewId_Img);
+    predictor->score2Label(label,score);
+//    predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
     imgSet->setFlagPosNeg(label);
-    imgSet->printLabel(label);
+//    imgSet->printLabel(label);
+    imgSet->printScore(score);
+
     delete predictor;
 }
 

@@ -30,6 +30,8 @@ public:
 
     void printLabel(cv::Mat &label);
 
+    void printScore(cv::Mat &score);
+
     void clean();
 
     void setFlagPosNeg(cv::Mat &label);
