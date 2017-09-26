@@ -1,5 +1,6 @@
 #include "imgset.h"
 #include "features/feaimg.h"
+#include <QFileInfo>
 #include <QPlainTextEdit>
 
 extern QPlainTextEdit *messageWidget;
@@ -84,8 +85,15 @@ void ImgSet::printLabel(cv::Mat &label)
 {
 //    for(int i=0;i<imgFiles.size();i++)
 //        std::cout << imgFiles[i].toStdString() << " " << (int)label.at<char>(i,0) << std::endl;
-    for(int i=0;i<imgFiles.size();i++)
-        messageWidget->appendPlainText(imgFiles[i] + " " + QString::number((int)label.at<char>(i,0)));
+    QFileInfo *file = new QFileInfo();
+    for(int i=0;i<imgFiles.size();i+=2)
+    {
+        file->setFile(imgFiles[i]);
+        messageWidget->appendPlainText(file->fileName() + "    " + QString::number((int)label.at<char>(i,0)));
+        file->setFile(imgFiles[i+1]);
+        messageWidget->appendPlainText(file->fileName() + "    " + QString::number((int)label.at<char>(i+1,0)));
+        messageWidget->appendPlainText("");
+    }
 }
 
 void ImgSet::clean()
