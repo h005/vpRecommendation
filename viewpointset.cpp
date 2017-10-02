@@ -6,7 +6,7 @@
 
 ViewPointSet::ViewPointSet()
 {
-    sceneZ = -0.8;
+    sceneZ = -0.9;
     N_sample = 500;
     feaGeo = NULL;
     m_features = 18;
@@ -92,7 +92,7 @@ void ViewPointSet::camPosSample()
       // sample with circle
       int counter = N_sample;
       double r1 = 1.5;
-      double r2 = 3.5;
+      double r2 = 3.0;
       double pi = acos(-1.0);
       double theta = pi / 3.0;
       double biasTheta = pi + pi / 2.0 - theta / 2.0;
@@ -145,6 +145,7 @@ void ViewPointSet::setRecommendationLocations(cv::Mat &score)
 void ViewPointSet::setRecommendationLocationsWithRatio(cv::Mat &score)
 {
     double sumRatio = 0.0;
+//    double ratioVal[9] = {0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1};
     double ratioVal[3] = {0.3,0.2,0.1};
     std::vector<double> ratio(ratioVal, ratioVal + sizeof(ratioVal) / sizeof(double));
     for(int i=0;i < ratio.size();i++)
@@ -158,8 +159,14 @@ void ViewPointSet::setRecommendationLocationsWithRatio(cv::Mat &score)
     for(int indexPart = 0; indexPart < ratio.size(); indexPart++)
     {
         int base = indexPart * score.rows / ratio.size();
+//        std::cout << "base " << base << std::endl;
         for(int i = 0; i < numsCamera * ratio[indexPart] / sumRatio; i++)
-            index.push_back(indexScore.at<int>(i + base, 0));
+        {
+//            int tmpIdx = rand()
+            int num = numsCamera * ratio[indexPart] / sumRatio;
+            int tmpIdx = (float) rand() / (float) RAND_MAX * num;
+            index.push_back(indexScore.at<int>(tmpIdx + base, 0));
+        }
     }
 
     feaGeo->setRecommendationLocationsPos(cameraPos, index);

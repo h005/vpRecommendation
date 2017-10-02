@@ -72,6 +72,9 @@ void MainWindow::on_importImgs_clicked()
                                              nullptr,
                                              QFileDialog::DontUseNativeDialog);
 
+    if(imgFiles.size() == 0)
+        return;
+
     imgSet->setImgFiles(imgFiles);
     imgSet->initialImgLabels();
 
@@ -117,7 +120,9 @@ void MainWindow::setImgLabels()
 //    qDebug() << "set Background done" << endl;
 //    messageWidget->document()->setPlainText("load the images");
     messageWidget->appendPlainText("load the images");
-    update();
+    messageWidget->repaint();
+//    update();
+    repaint();
     std::cout << "load images done " << std::endl;
 }
 

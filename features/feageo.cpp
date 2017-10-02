@@ -93,9 +93,9 @@ void FeaGeo::extractFeatures()
     setSilhouetteLength();
     setSilhouetteCE();
     setTiltAngle();
-//    setBoundingBox3D();
     setOutLierCount();
     setBoundingBox3DAbs();
+//    setBoundingBox3D();
     setBallCoord();
 
 }

@@ -58,6 +58,7 @@ void SfMContainer::setOutputFolder(QString outputFolder)
 
 void SfMContainer::sfm_imgs2ptModel()
 {
+    openMVG_pipLineStep = openMVG_main_SfMInit_ImageListing_Pipline;
     int exitCode = 0;
     QProcess::ExitStatus exitStatus = QProcess::NormalExit;
     if(!checkFolder())
