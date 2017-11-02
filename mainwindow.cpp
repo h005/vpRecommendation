@@ -82,7 +82,7 @@ void MainWindow::on_importImgs_clicked()
     QString num;
     num = num.setNum(imgFiles.size());
 
-    if(imgFiles.size() >= 1)
+    if(imgFiles.size() > 1)
         statusBar()->showMessage(num + " images were loaded.");
     else
         statusBar()->showMessage(num + " image was loaded.");
@@ -256,8 +256,8 @@ void MainWindow::setUpUiStyle()
 
     ui->plainTextEdit->setStyleSheet("QPlainTextEdit{color:white;background:rgb(35,35,35)}");
 
-    ui->geoLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
-    ui->imgLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
+//    ui->geoLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
+//    ui->imgLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
     ui->sfmLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
 }
 
@@ -310,6 +310,36 @@ void MainWindow::on_sfm_imgFolder_clicked()
     QString imgFolder = QFileDialog::getExistingDirectory(this,
                                                           QString("select the image folder"),
                                                           QString());
+
+    QDir sfmInputDir(imgFolder);
+    QStringList filters;
+    filters << "*.jpg" << "*.jpeg" << "*.JPG" << "*.JPEG" << "*.png";
+    sfmInputDir.setNameFilters(filters);
+    QStringList imgLists = sfmInputDir.entryList(filters);
+    QStringList imgFiles;
+    if(imgLists.size() == 0)
+        return;
+
+    for(int i=0;i<imgLists.size();i++)
+//    {
+        imgFiles.append(imgFolder + "/" + imgLists.at(i));
+//        qDebug() << i << " " << imgLists.at(i) << endl;
+//    }
+
+    imgSet->setImgFiles(imgFiles);
+    imgSet->initialImgLabels();
+
+    // set the status message
+    QString num;
+    num = num.setNum(imgFiles.size());
+
+    if(imgFiles.size() > 1)
+        statusBar()->showMessage(num + " images were loaded.");
+    else
+        statusBar()->showMessage(num + " image was loaded.");
+
+    setImgLabels();
+
     messageWidget->appendPlainText("sfm select the imgFolder:");
     messageWidget->appendPlainText(imgFolder);
     sfm->setImgFolder(imgFolder);

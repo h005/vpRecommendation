@@ -20,22 +20,12 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Viewpoint Assessment</string>
+   <string>江苏警院警用案件现场三维重建系统</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLabel" name="imgLabel">
-        <property name="text">
-         <string>Images Assessment</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QPushButton" name="importImgs">
         <property name="text">
@@ -51,23 +41,6 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="geoLabel">
-        <property name="text">
-         <string>Geometry Assessment</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="importModel">
         <property name="text">
          <string>Import Model</string>
@@ -78,13 +51,6 @@
        <widget class="QPushButton" name="recommend">
         <property name="text">
          <string>vpRecommend</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -258,7 +224,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
