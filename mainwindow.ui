@@ -27,34 +27,6 @@
     <item row="0" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QPushButton" name="importImgs">
-        <property name="text">
-         <string>Import</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="assess">
-        <property name="text">
-         <string>Assess</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="importModel">
-        <property name="text">
-         <string>Import Model</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="recommend">
-        <property name="text">
-         <string>vpRecommend</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLabel" name="sfmLabel">
         <property name="text">
          <string>Structure from Motion</string>
@@ -68,6 +40,13 @@
        <widget class="QPushButton" name="sfm_imgFolder">
         <property name="text">
          <string>Imgs Folder</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="exportModel">
+        <property name="text">
+         <string>Export Model</string>
         </property>
        </widget>
       </item>
@@ -89,6 +68,13 @@
        <widget class="QPushButton" name="sfm_pt2mesh">
         <property name="text">
          <string>Pt2mesh</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="showSfM">
+        <property name="text">
+         <string>Show SfM Result</string>
         </property>
        </widget>
       </item>
@@ -224,7 +210,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>

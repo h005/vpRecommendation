@@ -24,13 +24,13 @@ public:
 private slots:
     void on_Quit_clicked();
 
-    void on_importImgs_clicked();
+//    void on_importImgs_clicked();
 
-    void on_assess_clicked();
+//    void on_assess_clicked();
 
-    void on_importModel_clicked();
+//    void on_importModel_clicked();
 
-    void on_recommend_clicked();
+//    void on_recommend_clicked();
 
 //    void on_assessModel_clicked();
 
@@ -48,7 +48,11 @@ private slots:
 
     void on_cleanLog_clicked();
 
-    void on_recommendKnowAxis_clicked();
+//    void on_recommendKnowAxis_clicked();
+
+    void on_showSfM_clicked();
+
+    void on_exportModel_clicked();
 
 private:
     void imageQualityAssessment();

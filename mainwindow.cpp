@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // set the short cut
     // std::cout << "svm2k fill data"
-    ui->importImgs->setShortcut(Qt::Key_I);
+//    ui->importImgs->setShortcut(Qt::Key_I);
 
     // set feaGeo to NULL pointer
     feaGeo = NULL;
@@ -63,32 +63,7 @@ void MainWindow::setGLWidget()
 //    qDebug() << "set glWidget done" << endl;
 }
 
-void MainWindow::on_importImgs_clicked()
-{
-    QStringList imgFiles = QFileDialog::getOpenFileNames(this,
-                                             QString("Load images"),
-                                             QString("/home/hejw005/Documents/learning/QtProject/vpRecommendation/data/imgs/"),
-                                             QString("Image Files(*.jpg *.jpeg *.JPG *.JPEG *.png)"),
-                                             nullptr,
-                                             QFileDialog::DontUseNativeDialog);
 
-    if(imgFiles.size() == 0)
-        return;
-
-    imgSet->setImgFiles(imgFiles);
-    imgSet->initialImgLabels();
-
-    // set the status message
-    QString num;
-    num = num.setNum(imgFiles.size());
-
-    if(imgFiles.size() > 1)
-        statusBar()->showMessage(num + " images were loaded.");
-    else
-        statusBar()->showMessage(num + " image was loaded.");
-
-    setImgLabels();
-}
 
 void MainWindow::setImgLabels()
 {
@@ -126,66 +101,6 @@ void MainWindow::setImgLabels()
     std::cout << "load images done " << std::endl;
 }
 
-
-void MainWindow::on_assess_clicked()
-{
-    statusBar()->showMessage("busy");
-    statusBar()->repaint();
-    imageQualityAssessment();
-    statusBar()->showMessage("");
-////    qDebug() << "imgLabel size " << imgSet->imgLabelSize() << endl;
-//    imgSet->setFeatures();
-//    Predictor *predictor = new Predictor();
-//    // set img features ie 2D features ie XTest1
-//    predictor->setImgFeatures(imgSet);
-//    cv::Mat label;
-//    predictor->predictLabelWithViewId(label, Predictor::ViewId_Img);
-//    imgSet->printLabel(label);
-}
-
-void MainWindow::on_importModel_clicked()
-{
-    QString modelFile = QFileDialog::getOpenFileName(this,
-                                             QString("Load 3D model"),
-                                             QString("/home/hejw005/Documents/learning/QtProject/vpRecommendation/data/models/"),
-                                             QString("Image Files(*.off *.obj)"),
-                                             nullptr,
-                                             QFileDialog::DontUseNativeDialog);
-
-//    qDebug() << "modelFile " << modelFile << endl;
-    messageWidget->appendPlainText(modelFile + " loading");
-
-    if(modelFile == "")
-    {
-        statusBar()->showMessage("no selected model");
-        return;
-    }
-    statusBar()->showMessage(modelFile + " loading");
-
-    glWidget = new GLWidget(modelFile);
-    QSurfaceFormat format;
-    format.setDepthBufferSize(24);
-    format.setStencilBufferSize(8);
-    format.setVersion(3, 2);
-    format.setProfile(QSurfaceFormat::CoreProfile);
-    glWidget->setFormat(format);
-    setGLWidget();
-    messageWidget->appendPlainText(modelFile + " is loaded");
-    statusBar()->showMessage(modelFile + " is loaded");
-}
-
-void MainWindow::on_recommend_clicked()
-{
-//    feaGeo = new FeaGeo(this->glWidget);
-//    feaGeo->extractFeaturesPipline();
-//    if(!feaGeo)
-//        feaGeo = new FeaGeo(this->glWidget);
-//    feaGeo->vpRecommendPipLine();
-    statusBar()->showMessage("busy");
-    statusBar()->repaint();
-    viewpointQualityAssessment(1);
-    statusBar()->showMessage("");
-}
 
 //void MainWindow::on_assessModel_clicked()
 //{
@@ -240,11 +155,11 @@ void MainWindow::viewpointQualityAssessment(int knowAxis)
 
 void MainWindow::setUpUiStyle()
 {
-    ui->importImgs->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
-    ui->assess->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+//    ui->importImgs->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+//    ui->assess->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->Quit->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
-    ui->importModel->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
-    ui->recommend->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+//    ui->importModel->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+//    ui->recommend->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->SfM->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->Clear->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->sfm_imgFolder->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
@@ -253,8 +168,9 @@ void MainWindow::setUpUiStyle()
     ui->sfmClean->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->cleanLog->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
 //    ui->recommendKnowAxis->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
-
+    ui->showSfM->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->plainTextEdit->setStyleSheet("QPlainTextEdit{color:white;background:rgb(35,35,35)}");
+    ui->exportModel->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
 
 //    ui->geoLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
 //    ui->imgLabel->setStyleSheet("QLabel{color:white;background:rgb(75,75,75)}");
@@ -343,6 +259,17 @@ void MainWindow::on_sfm_imgFolder_clicked()
     messageWidget->appendPlainText("sfm select the imgFolder:");
     messageWidget->appendPlainText(imgFolder);
     sfm->setImgFolder(imgFolder);
+    QString outputFolder = imgFolder + "/result";
+    QDir reconstructionFolder(imgFolder);
+    if(!reconstructionFolder.exists(QString("result")))
+    {
+        qDebug() << "reconstruction does not exists" << endl;
+        reconstructionFolder.mkdir(QString("result"));
+    }
+    else
+        qDebug() << "reconstruction exists" << endl;
+
+    sfm->setOutputFolder(outputFolder);
 }
 
 void MainWindow::on_sfm_outputFolder_clicked()
@@ -377,10 +304,60 @@ void MainWindow::on_cleanLog_clicked()
     sfm->cleanLog();
 }
 
-void MainWindow::on_recommendKnowAxis_clicked()
+void MainWindow::on_showSfM_clicked()
 {
-    statusBar()->showMessage("busy");
-    statusBar()->repaint();
-    viewpointQualityAssessment(0);
-    statusBar()->showMessage("");
+    on_Clear_clicked();
+    QString modelFile = sfm->getOutputFolder();
+    modelFile = modelFile + "/reconstruction/scene_dense_mesh_texture.obj";
+    statusBar()->showMessage(modelFile + " loading");
+
+    glWidget = new GLWidget(modelFile);
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    format.setVersion(3, 2);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    glWidget->setFormat(format);
+    setGLWidget();
+    messageWidget->appendPlainText(modelFile + " is loaded");
+    statusBar()->showMessage(modelFile + " is loaded");
+}
+
+
+void MainWindow::on_exportModel_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                                   ".obj",
+                                   tr("obj Files (*.obj)"));
+
+    QFileInfo fileInfo(fileName);
+
+
+    QString modelFile = sfm->getOutputFolder();
+
+    QDir sfmModelFolder(modelFile + "/reconstruction");
+    if(!sfmModelFolder.exists("scene_dense_mesh_texture.obj"))
+    {
+        messageWidget->appendPlainText("The model file does not exists");
+//        std::cout << "the model file does not exists" << std::endl;
+        return;
+    }
+    QString tmpModelFile = modelFile + "/reconstruction/scene_dense_mesh_texture.obj";
+    QString tmpTextureFile = modelFile + "/reconstruction/scene_dense_mesh_texture_material_0_map_Kd.jpg";
+    QString tmpMtlFile = modelFile + "/reconstruction/scene_dense_mesh_texture.mtl";
+
+
+    // copy model file
+    QFile::copy(tmpModelFile,fileName);
+    // copy texture file
+    QFileInfo auxFileInfo(tmpTextureFile);
+    QFile::copy(tmpTextureFile, fileInfo.absolutePath() + "/" + auxFileInfo.fileName());
+    // copy mtl file
+    auxFileInfo = QFileInfo(tmpMtlFile);
+    QFile::copy(tmpMtlFile, fileInfo.absolutePath() + "/" + auxFileInfo.fileName());
+
+
+    messageWidget->appendPlainText("export the obj model to " + fileName);
+
+    statusBar()->showMessage("export model done");
 }

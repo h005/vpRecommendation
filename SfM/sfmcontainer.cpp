@@ -120,6 +120,11 @@ void SfMContainer::cleanLog()
     }
 }
 
+QString SfMContainer::getOutputFolder()
+{
+    return outputFolder;
+}
+
 bool SfMContainer::checkFolder()
 {
     if(imgFolder == "")
