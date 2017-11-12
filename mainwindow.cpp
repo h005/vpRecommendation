@@ -163,7 +163,7 @@ void MainWindow::setUpUiStyle()
     ui->SfM->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->Clear->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->sfm_imgFolder->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
-    ui->sfm_outputFolder->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+//    ui->sfm_outputFolder->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->sfm_pt2mesh->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->sfmClean->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->cleanLog->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");

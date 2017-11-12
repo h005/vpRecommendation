@@ -51,13 +51,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="sfm_outputFolder">
-        <property name="text">
-         <string>Output Folder</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="SfM">
         <property name="text">
          <string>SfM</string>
