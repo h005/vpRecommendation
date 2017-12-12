@@ -159,6 +159,8 @@ void SfMContainer::reconstruction(int exitCode, QProcess::ExitStatus exitStatus)
 ///
 void SfMContainer::imgs2ptModel(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    std::cout << "################## exitCode ################ imgs2ptModel ##### " << exitStatus << std::endl;
+    QString message;
     if(!exitCode && !exitStatus)
     {
         switch (openMVG_pipLineStep) {
@@ -168,18 +170,24 @@ void SfMContainer::imgs2ptModel(int exitCode, QProcess::ExitStatus exitStatus)
             openMVG_pipLineStep++;
             break;
         case openMVG_main_ComputeFeatures_Pipline:
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("done");
             messageWidget->appendPlainText("perform_openMVG_main_ComputeFeatures ...");
             perform_openMVG_main_ComputeFeatures(exitCode, exitStatus);
             openMVG_pipLineStep++;
             break;
         case openMVG_main_ComputeMatches_Pipline:
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("done");
             messageWidget->appendPlainText("perform_openMVG_main_ComputeMatches ...");
             perform_openMVG_main_ComputeMatches(exitCode, exitStatus);
             openMVG_pipLineStep++;
             break;
         case openMVG_main_IncrementalSfM_Pipline:
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("done");
             messageWidget->appendPlainText("perform_openMVG_main_IncrementalSfM ...");
             perform_openMVG_main_IncrementalSfM(exitCode, exitStatus);
@@ -187,6 +195,8 @@ void SfMContainer::imgs2ptModel(int exitCode, QProcess::ExitStatus exitStatus)
             break;
         default:
             openMVG_pipLineStep++;
+            message = myProcess->readAll();
+            std::cout << message.toStdString() << std::endl;
             messageWidget->appendPlainText("done");
             messageWidget->appendPlainText("#################################\nstructure from motion done");
             break;
@@ -222,11 +232,11 @@ void SfMContainer::perform_openMVG_main_SfMInit_ImageListing(int exitCode,
               << "-o"
               << outputFolder + "/model"
               << "-d"
-              << cameraDatabase
-              << "-g"
-              << "0"
-              << "-c"
-              << "1";
+              << cameraDatabase;
+//              << "-g"
+//              << "0"
+//              << "-c"
+//              << "1";
 
     myProcess->start(openMVG_main_SfMInit_ImageListing, arguments);
 }
@@ -252,9 +262,9 @@ void SfMContainer::perform_openMVG_main_ComputeMatches(int exitCode,
     QStringList arguments;
     arguments.clear();
     arguments << "-n"
-              << "ANNL2"
-              << "-g"
-              << "f"
+              << "BRUTEFORCEL2"
+//              << "-g"
+//              << "f"
               << "-i"
               << outputFolder + "/model/sfm_data.json"
               << "-o"
@@ -268,11 +278,11 @@ void SfMContainer::perform_openMVG_main_IncrementalSfM(int exitCode,
 {
     QStringList arguments;
     arguments.clear();
-    arguments << "-c"
-              << "1"
-              << "-f"
-              << "ADJUST_ALL"
-              << "-i"
+//    arguments << "-c"
+//              << "1"
+//              << "-f"
+//              << "ADJUST_ALL"
+    arguments << "-i"
               << outputFolder + "/model/sfm_data.json"
               << "-m"
               << outputFolder + "/model"
