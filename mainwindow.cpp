@@ -252,6 +252,7 @@ void MainWindow::setUpUiStyle()
     ui->sfm_pt2mesh->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->sfmClean->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
     ui->cleanLog->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
+    ui->loadCameras->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
 //    ui->recommendKnowAxis->setStyleSheet("QPushButton{color:white;background:rgb(35,35,35)}");
 
     ui->plainTextEdit->setStyleSheet("QPlainTextEdit{color:white;background:rgb(35,35,35)}");
@@ -353,4 +354,69 @@ void MainWindow::on_recommendKnowAxis_clicked()
     statusBar()->repaint();
     viewpointQualityAssessment(0);
     statusBar()->showMessage("");
+}
+
+void MainWindow::on_loadCameras_clicked()
+{
+    QString cameraFile = QFileDialog::getOpenFileName(this,
+                                             QString("Load camera locations"),
+                                             QString("/home/hejw005/Documents/vpDataSet/nju/model/scene_dense_mesh_texture_simple.obj.mtl"),
+                                             QString("Image Files(*.list *.txt)"),
+                                             nullptr,
+                                             QFileDialog::DontUseNativeDialog);
+
+    std::fstream fs;
+    std::vector< glm::vec3 > cameraLocations;
+    std::vector< glm::vec3 > recommendedCamerasLocations;
+
+///
+/// cameraLocations.list
+/// #NUM
+/// x1 y1 z1
+/// x2 y2 z2
+/// ...
+/// x_NUM y_NUM z_NUM
+///
+
+    // read in the locations from the file
+    fs.open(cameraFile.toStdString(), std::fstream::in);
+    int NUM;
+    fs >> NUM;
+    float tmp;
+    for(int i=0;i<NUM;i++)
+    {
+        glm::vec3 pos;
+        fs >> tmp;
+        pos.x = tmp;
+        fs >> tmp;
+        pos.y = tmp;
+        fs >> tmp;
+        pos.z = tmp;
+        cameraLocations.push_back(pos);
+    }
+    fs.close();
+    fs.open("/home/hejw005/Documents/vpDataSet/nju/model/viewRecommendation.list");
+    fs >> NUM;
+    for(int i=0;i<NUM;i++)
+    {
+        glm::vec3 pos;
+        fs >> tmp;
+        pos.x = tmp;
+        fs >> tmp;
+        pos.y = tmp;
+        fs >> tmp;
+        pos.z = tmp;
+        recommendedCamerasLocations.push_back(pos);
+    }
+    fs.close();
+
+    if(!glWidget)
+    {
+        std::cout << "please input the model first" << std::endl;
+        return;
+    }
+    glWidget->setCamerasLocation(cameraLocations);
+    glWidget->setRecommendationCameraLocations(recommendedCamerasLocations);
+
+    std::cout << "camera postion loaded done" << std::endl;
 }

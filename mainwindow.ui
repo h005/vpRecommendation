@@ -75,6 +75,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="loadCameras">
+        <property name="text">
+         <string>Load Cameras</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="recommend">
         <property name="text">
          <string>vpRecommend</string>

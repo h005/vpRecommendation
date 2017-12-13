@@ -50,6 +50,8 @@ private slots:
 
     void on_recommendKnowAxis_clicked();
 
+    void on_loadCameras_clicked();
+
 private:
     void imageQualityAssessment();
 

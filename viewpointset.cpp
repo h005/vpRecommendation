@@ -75,26 +75,15 @@ void ViewPointSet::genMVMatrix(std::vector<glm::mat4> &mvList)
 void ViewPointSet::camPosSample()
 {
     srand((int)time(0));
-
-//    glm::vec2 xRange(-5.5, 5.5);
-//    glm::vec2 yRange(-5.5, -1.0);
-
-//    int counter = N_sample;
-//    while(counter--)
-//    {
-//        float tmpx = (float)rand() / (float)RAND_MAX;
-//        tmpx = tmpx * (xRange.y - xRange.x) + xRange.x;
-//        float tmpy = (float)rand() / (float)RAND_MAX;
-//        tmpy = tmpy * (yRange.y - yRange.x) + yRange.x;
-//        cameraPos.push_back(glm::vec2(tmpx,tmpy));
-//    }
-
-      // sample with circle
+      // random sample with circle
+/*
       int counter = N_sample;
-      double r1 = 1.5;
-      double r2 = 3.0;
+//      double r1 = 1.5;
+//      double r2 = 3.0;
+      double r1 = 1.2;
+      double r2 = 1.5;
       double pi = acos(-1.0);
-      double theta = pi / 3.0;
+      double theta = pi / 3.0 * 2;
       double biasTheta = pi + pi / 2.0 - theta / 2.0;
       while(counter--)
       {
@@ -104,9 +93,50 @@ void ViewPointSet::camPosSample()
           tmpTheta = tmpTheta * theta + biasTheta;
           float tmpx = r * cos(tmpTheta);
           float tmpy = r * sin(tmpTheta);
-          cameraPos.push_back(glm::vec3(tmpx, tmpy, sceneZ));
+//          cameraPos.push_back(glm::vec3(tmpx, tmpy, sceneZ));
+          cameraPos.push_back(glm::vec3(tmpx, tmpy, -0.45));
       }
+*/
+    // uniform sample in the sector
+//    int counter = N_sample;
+    double r1 = 1.2;
+    double r2 = 1.5;
+    double pi = acos(-1.0);
+    double theta = pi / 3.0 * 2.0;
+    double biasTheta = pi + pi / 2.0 - theta / 2.0;
+    // area of the sector
+    double areaSector = theta / 2.0 * (r2 * r2 - r1 * r1);
+    // area of the retangle
+    double retangle_w = 2.0 * r2 * sin(theta / 2.0);
+    double retangle_h = r2 - r1 * cos(theta / 2.0);
+    double areaRetangle =  2.0 * r2 * sin(theta / 2.0) * (r2 - r1 * cos(theta / 2.0));
 
+    int counter = int(areaRetangle * N_sample / areaSector);
+
+    // sample_ratio = W / W_step, H / H_step
+    double sample_ratio = sqrt(double(counter));
+    double w_step = retangle_w / sample_ratio;
+    double h_step = retangle_h / sample_ratio;
+    glm::vec2 startPoint(- r2 * sin(theta / 2.0), - r1 * cos(theta / 2.0));
+    glm::vec2 endPoint(r2 * sin(theta / 2.0), - r2);
+
+    double tmpx,tmpy;
+    double tmpTheta, tmpR;
+    for(int i = 0; i < sample_ratio; i++)
+        for(int j = 0; j < sample_ratio; j++)
+        {
+            tmpx = startPoint.x + i * w_step;
+            tmpy = startPoint.y - j * h_step;
+            tmpR = sqrt(tmpx * tmpx + tmpy * tmpy);
+            if(tmpR < r1 || tmpR > r2)
+                continue;
+            // convert to polar coordinates
+            tmpTheta = pi + acos( - tmpx / tmpR);
+//            std::cout << "[" << tmpx << ", "<< tmpy << "] tmpTheta " << tmpTheta << " [ " << biasTheta << ", " << biasTheta + theta << "]" << std::endl;
+            if(tmpTheta >= biasTheta && tmpTheta <= biasTheta + theta)
+                cameraPos.push_back(glm::vec3(tmpx, tmpy, -0.4));
+        }
+    std::cout << "total sample points "  << cameraPos.size() << std::endl;
 }
 
 void ViewPointSet::fillInFeature(int index)

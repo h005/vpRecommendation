@@ -171,6 +171,29 @@ void GLWidget::paintGL()
 
 //    std::vector<glm::vec3> &points = m_relation->getModelPoints();
 
+    if(camerasLocations.size() > 0){
+        glUseProgram(m_sphereProgramID);
+        std::vector<glm::vec3>::iterator it;
+        for(it = camerasLocations.begin(); it != camerasLocations.end(); it++)
+        {
+            glm::mat4 pointMV = glm::translate(modelViewMatrix, *it);
+            pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
+            cameraModelNeg.draw(pointMV, m_proj);
+        }
+    }
+
+    if(recommendedCameraLocations.size() > 0)
+    {
+        glUseProgram(m_sphereProgramID);
+        std::vector< glm::vec3 >::iterator it;
+        for(it = recommendedCameraLocations.begin(); it != recommendedCameraLocations.end(); it++)
+        {
+            glm::mat4 pointMV = glm::translate(modelViewMatrix, *it);
+            pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
+            cameraModelPos.draw(pointMV, m_proj);
+        }
+    }
+
     if (vpRcameraLocationsPos.size() > 0) {
         glUseProgram(m_sphereProgramID);
 //        std::cout << "draw pos cameras " << vpRcameraLocationsPos.size() << std::endl;
@@ -412,6 +435,7 @@ void GLWidget::setRecommendationLocationsPos(std::vector<glm::vec3> &vpRcameraLo
         glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,vpRcameraLocations[index[i]].z, 1.0);
         pos = glm::inverse(shift_scale) * pos;
         this->vpRcameraLocationsPos.push_back(glm::vec3(pos.x, pos.y, pos.z));
+        std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
     }
 }
 
@@ -425,6 +449,30 @@ void GLWidget::setRecommendationLocationsNeg(std::vector<glm::vec3> &vpRcameraLo
         glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,vpRcameraLocations[index[i]].z,1.0);
         pos = glm::inverse(shift_scale) * pos;
         this->vpRcameraLocationsNeg.push_back(glm::vec3(pos.x, pos.y, pos.z));
+    }
+}
+
+void GLWidget::setCamerasLocation(std::vector<glm::vec3> &cameraLocations)
+{
+    this->camerasLocations.clear();
+    for(int i = 0; i< cameraLocations.size(); i++)
+    {
+        glm::vec4 pos(cameraLocations[i].x, cameraLocations[i].y, cameraLocations[i].z, 1.0);
+        this->camerasLocations.push_back(glm::vec3(pos.x, pos.y, pos.z));
+    }
+}
+
+void GLWidget::setRecommendationCameraLocations(std::vector<glm::vec3> &recommendedCameraLocations)
+{
+    this->recommendedCameraLocations.clear();
+    for(int i = 0; i < recommendedCameraLocations.size(); i++)
+    {
+        glm::vec4 pos(recommendedCameraLocations[i].x,
+                      recommendedCameraLocations[i].y,
+                      recommendedCameraLocations[i].z,
+                      1.0);
+        this->recommendedCameraLocations.push_back(glm::vec3(pos.x, pos.y, pos.z));
+
     }
 }
 

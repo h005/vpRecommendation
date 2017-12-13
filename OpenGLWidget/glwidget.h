@@ -79,6 +79,10 @@ public:
     void setRecommendationLocationsNeg(std::vector<glm::vec3> &vpRcameraLocations,
                                        std::vector<int> &index);
 
+    void setCamerasLocation(std::vector<glm::vec3> &cameraLocations);
+
+    void setRecommendationCameraLocations(std::vector<glm::vec3> &recommendedCameraLocations);
+
     void clearVpRcameraLocations();
 
     glm::mat4 getNowMatrix();
@@ -129,6 +133,8 @@ protected:
     glm::vec3 cameraPos;
     std::vector< glm::vec3 > vpRcameraLocationsPos;
     std::vector< glm::vec3 > vpRcameraLocationsNeg;
+    std::vector< glm::vec3 > camerasLocations;
+    std::vector< glm::vec3 > recommendedCameraLocations;
     QPointF m_lastPos;
     bool flag_move;
     float camPosLength;
