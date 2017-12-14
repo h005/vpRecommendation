@@ -60,8 +60,8 @@ GLWidget::GLWidget(const QString &modelPath, QWidget *parent)
       m_sphereProgramID(0)
 {
     model.load(modelPath.toLocal8Bit().data());
-    cameraModelPos.load("./camera/camera2.obj");
-    cameraModelNeg.load("./camera/camera3.obj");
+    cameraModelPos.load("./camera/pin1.obj");
+    cameraModelNeg.load("./camera/pin2.obj");
     std::pair<GLfloat, glm::mat4> scaleAndShift = model.recommandScaleAndShift();
     m_scaleBeforeRender = scaleAndShift.first;
     m_shiftBeforeRender = scaleAndShift.second;
@@ -180,6 +180,7 @@ void GLWidget::paintGL()
             pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
             cameraModelNeg.draw(pointMV, m_proj);
         }
+//        std::cout << "draw camera neg models " << std::endl;
     }
 
     if(recommendedCameraLocations.size() > 0)
@@ -192,6 +193,7 @@ void GLWidget::paintGL()
             pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
             cameraModelPos.draw(pointMV, m_proj);
         }
+//        std::cout << "draw camera pos models " << std::endl;
     }
 
     if (vpRcameraLocationsPos.size() > 0) {
@@ -202,7 +204,7 @@ void GLWidget::paintGL()
             // multiple point's position
             glm::mat4 pointMV = glm::translate(modelViewMatrix, *it);
             pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
-            cameraModelPos.draw(pointMV, m_proj);
+            cameraModelNeg.draw(pointMV, m_proj);
         }
     }
     if (vpRcameraLocationsNeg.size() > 0) {
