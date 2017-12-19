@@ -131,8 +131,8 @@ void GLWidget::initializeGL()
     // can recreate all resources.
     initializeOpenGLFunctions();
 //    printf("OpenGL version... is (%s)\n", glGetString(GL_VERSION));
-    glClearColor(0.368, 0.368, 0.733, m_transparent ? 0 : 1);
-//    glClearColor(1.0, 1.0, 1.0, m_transparent ? 0 : 1);
+//    glClearColor(0.368, 0.368, 0.733, m_transparent ? 0 : 1);
+    glClearColor(1.0, 1.0, 1.0, m_transparent ? 0 : 1);
 //    glEnable(GL_COLOR_MATERIAL);
 //    glColorMaterial(GL_FRONT,GL_AMBIENT);
 //    glColor3f(1.0,1.0,1.0);
