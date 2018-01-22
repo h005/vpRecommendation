@@ -450,17 +450,18 @@ void GModel::cleanUp() {
         delete pImporter;
         pImporter = NULL;
     }
-
+//    std::cout << "gmodel pImporter cleanup" << std::endl;
     if (textureIds) {
         glDeleteTextures(textureIdMap.size(), textureIds);
         delete textureIds;
         textureIds = NULL;
     }
+//    std::cout << "gmodel textureIds cleanup" << std::endl;
     if (m_programID) {
         glDeleteProgram(m_programID);
         m_programID = 0;
     }
-
+//    std::cout << "gmodel m_programID cleanup" << std::endl;
     scene = NULL;
 
     std::vector<GModel::MeshEntry *>::iterator it;

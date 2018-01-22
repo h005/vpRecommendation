@@ -57,6 +57,7 @@ class GLWidget : public DragableWidget
 
 public:
     GLWidget(const QString &modelPath, QWidget *parent = 0);
+    void addModel(QString &modelPathAdded);
     ~GLWidget();
 
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
@@ -92,6 +93,8 @@ public:
     // projection matrix
     glm::mat4 getProjMatrix();
 
+    QString getModelPath();
+
     // render the model
     void render();
 
@@ -120,6 +123,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *e);
 
 protected:
+    QString modelPath;
     glm::mat4 m_camera;
     glm::mat4 m_proj;
     glm::mat4 vpRecommendationMatrix;
@@ -128,6 +132,8 @@ protected:
     GModel model;
     GModel cameraModelPos;
     GModel cameraModelNeg;
+    GModel extraModel;
+    int extraModelFlag;
     GLuint m_sphereProgramID = 0;
     Sphere sphere;
     glm::vec3 cameraPos;

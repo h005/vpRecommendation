@@ -15,6 +15,8 @@ public:
 
     FeaImg(QString imgFile);
 
+    FeaImg(cv::Mat &img);
+
     void setFeatures();
 
     void fillInMat(cv::Mat &featureMat, int index);

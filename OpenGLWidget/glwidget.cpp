@@ -59,9 +59,10 @@ GLWidget::GLWidget(const QString &modelPath, QWidget *parent)
       m_relation(NULL),
       m_sphereProgramID(0)
 {
+    this->modelPath = modelPath;
     model.load(modelPath.toLocal8Bit().data());
-    cameraModelPos.load("./camera/pin1.obj");
-    cameraModelNeg.load("./camera/pin2.obj");
+    cameraModelPos.load("./camera/pin1_1.obj");
+    cameraModelNeg.load("./camera/pin1_2.obj");
     std::pair<GLfloat, glm::mat4> scaleAndShift = model.recommandScaleAndShift();
     m_scaleBeforeRender = scaleAndShift.first;
     m_shiftBeforeRender = scaleAndShift.second;
@@ -69,14 +70,26 @@ GLWidget::GLWidget(const QString &modelPath, QWidget *parent)
     flag_move = false;
 //    camPosLength = 50000.f;
     camPosLength = 3.f;
-    rate = 0.05;
+    rate = 0.02;
 //    std::cout << "glwidget initial ... " << std::endl;
 //    m_relation = new PointsMatchRelation("1.txt");
+
+    setFocusPolicy( Qt::StrongFocus );
+    extraModelFlag = 0;
+}
+
+void GLWidget::addModel(QString &modelPathAdded)
+{
+    extraModel.load(modelPathAdded.toStdString().c_str());
+    makeCurrent();
+    extraModel.bindDataToGL();
+    doneCurrent();
+    extraModelFlag = 1;
 }
 
 GLWidget::~GLWidget()
 {
-    cleanup();
+//    cleanup();
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -106,13 +119,21 @@ void GLWidget::cleanup()
         glDeleteProgram(m_sphereProgramID);
         m_sphereProgramID = 0;
     }
-    sphere.cleanup();
+//    sphere.cleanup();
     model.cleanUp();
+    std::cout<<"model cleanup done" << std::endl;
     cameraModelPos.cleanUp();
+    std::cout<<"cameraModelPos cleanup done" << std::endl;
     cameraModelNeg.cleanUp();
+    std::cout<<"cameraModelNeg cleanup done" << std::endl;
     clearVpRcameraLocations();
-
+    if(extraModelFlag)
+    {
+        extraModel.cleanUp();
+        extraModelFlag = 1;
+    }
     doneCurrent();
+    std::cout << "cleanup done" << std::endl;
 }
 
 void GLWidget::initializeGL()
@@ -180,7 +201,7 @@ void GLWidget::paintGL()
             pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
             cameraModelNeg.draw(pointMV, m_proj);
         }
-//        std::cout << "draw camera neg models " << std::endl;
+//        std::cout << "draw camera position " << std::endl;
     }
 
     if(recommendedCameraLocations.size() > 0)
@@ -193,7 +214,7 @@ void GLWidget::paintGL()
             pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
             cameraModelPos.draw(pointMV, m_proj);
         }
-//        std::cout << "draw camera pos models " << std::endl;
+//        std::cout << "draw camera recommended position " << std::endl;
     }
 
     if (vpRcameraLocationsPos.size() > 0) {
@@ -204,7 +225,7 @@ void GLWidget::paintGL()
             // multiple point's position
             glm::mat4 pointMV = glm::translate(modelViewMatrix, *it);
             pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
-            cameraModelNeg.draw(pointMV, m_proj);
+            cameraModelPos.draw(pointMV, m_proj);
         }
     }
     if (vpRcameraLocationsNeg.size() > 0) {
@@ -217,6 +238,12 @@ void GLWidget::paintGL()
             pointMV = glm::scale(pointMV, glm::vec3(0.45 / m_scaleBeforeRender));
             cameraModelNeg.draw(pointMV, m_proj);
         }
+    }
+    if (extraModelFlag)
+    {
+//        glUseProgram(m_sphereProgramID);
+        extraModel.draw(modelViewMatrix, m_proj);
+//        std::cout << "draw the sphere" << std::endl;
     }
 
 }
@@ -243,22 +270,18 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
     if(e->key() == Qt::Key_Left)
     {
         cameraPos.r += rate * camPosLength;
-//        std::cout << "left arrow" << std::endl;
     }
     else if(e->key() == Qt::Key_Right)
     {
         cameraPos.r -= rate * camPosLength;
-//        std::cout << "right arrow" << std::endl;
     }
     else if(e->key() == Qt::Key_Up)
     {
         cameraPos.g -= rate * camPosLength;
-//        std::cout << "up arrow" << std::endl;
     }
     else if(e->key() == Qt::Key_Down)
     {
         cameraPos.g += rate * camPosLength;
-//        std::cout << "down arrow" << std::endl;
     }
 //    if(cameraPos.g < 0)
 //        cameraPos.g = 0;
@@ -271,11 +294,11 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 void GLWidget::mousePressEvent(QMouseEvent *e)
 {
     DragableWidget::mousePressEvent(e);
-    if(e->button() ==  Qt::MiddleButton)
-    {
-        flag_move = true;
-        m_lastPos = e->pos();
-    }
+//    if(e->button() ==  Qt::MiddleButton)
+//    {
+//        flag_move = true;
+//        m_lastPos = e->pos();
+//    }
     if(e->button() == Qt::RightButton)
     {
         addPoint(e->pos());
@@ -435,9 +458,10 @@ void GLWidget::setRecommendationLocationsPos(std::vector<glm::vec3> &vpRcameraLo
     for(int i=0;i<index.size();i++)
     {
         glm::vec4 pos(vpRcameraLocations[index[i]].x,vpRcameraLocations[index[i]].y,vpRcameraLocations[index[i]].z, 1.0);
-        pos = glm::inverse(shift_scale) * pos;
+        // 20180821 needless to inverse the shift_scale matrix now
+//        pos = glm::inverse(shift_scale) * pos;
         this->vpRcameraLocationsPos.push_back(glm::vec3(pos.x, pos.y, pos.z));
-        std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
+//        std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
     }
 }
 
@@ -509,6 +533,11 @@ glm::mat4 GLWidget::getProjMatrix()
     return m_proj;
 }
 
+QString GLWidget::getModelPath()
+{
+    return modelPath;
+}
+
 void GLWidget::render()
 {
     makeCurrent();
@@ -558,7 +587,8 @@ void GLWidget::setParameters(std::vector<GLfloat> &vertice,
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT,viewport);
 
-    glm::mat4 modelViewMatrix = getModelViewMatrix();
+//    glm::mat4 modelViewMatrix = getModelViewMatrix();
+    glm::mat4 modelViewMatrix = vpRecommendationMatrix;
     glm::mat4 mvp = m_proj * modelViewMatrix;
     int p_height = viewport[3]-viewport[1];
     int p_width = viewport[2]-viewport[0];
@@ -642,6 +672,7 @@ void GLWidget::setParameters(std::vector<GLfloat> &vertice,
     p_model_x = glm::vec4(xmax - xmin,0,0,0);
     p_model_y = glm::vec4(0,ymax - ymin,0,0);
     p_model_z = glm::vec4(0,0,zmax - zmin,0);
+
     p_model_x = modelViewMatrix * p_model_x;
     p_model_y = modelViewMatrix * p_model_y;
     p_model_z = modelViewMatrix * p_model_z;

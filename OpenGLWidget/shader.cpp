@@ -58,10 +58,10 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 
     GLboolean shaderCompile = false;
     glGetBooleanv(GL_SHADER_COMPILER, &shaderCompile);
-    if(shaderCompile == false)
-        std::cout << "shader language support: 0" << std::endl;
-    else
-        std::cout << "shader language support: 1" << std::endl;
+//    if(shaderCompile == false)
+//        std::cout << "shader language support: 0" << std::endl;
+//    else
+//        std::cout << "shader language support: 1" << std::endl;
 
     // Compile Vertex Shader
     char const * VertexSourcePointer = VertexShaderCode.c_str();

@@ -48,9 +48,11 @@ private slots:
 
     void on_cleanLog_clicked();
 
-    void on_recommendKnowAxis_clicked();
+//    void on_recommendKnowAxis_clicked();
 
     void on_loadCameras_clicked();
+
+    void on_showGround_clicked();
 
 private:
     void imageQualityAssessment();
@@ -74,6 +76,9 @@ private:
     FeaGeo *feaGeo;
     GLWidget *glWidget;
     SfMContainer *sfm;
+
+    std::vector< glm::vec3 > cameraLocations;
+    std::vector< glm::vec3 > groundPlane;
 
     // setup UI
     void setImgLabels();

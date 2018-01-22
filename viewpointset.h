@@ -32,6 +32,7 @@ class ViewPointSet
 {
 public:
     ViewPointSet();
+    ViewPointSet(std::vector< glm::vec3 > &refCameraPos, std::vector< glm::vec3 > &groundPlane);
     ~ViewPointSet();
 
     void setViewpoints();
@@ -39,6 +40,7 @@ public:
     // it depends we know the axis direction or not
     void setFeatures(GLWidget *glWidget, int knowAxis);
 
+    void copyImgFeatureTo(cv::Mat &imgFea);
     void copyGeoFeatureTo(cv::Mat &geoFea);
 
     std::vector<glm::vec3>& getCameraPos();
@@ -73,6 +75,8 @@ private:
 
     void camPosSample();
 
+    void camPosSampleParameter(double &r1, double &r2, double &theta, double &cameraZ, double &shiftY);
+
     void fillInFeature(int index);
 
 private:
@@ -84,11 +88,15 @@ private:
     FeaGeo *feaGeo;
 
     cv::Mat geoFeatures;
+    cv::Mat imgFeatures;
 
     glm::mat4 rectifyMatrix;
 
     std::vector<glm::vec3> cameraPos;
     std::vector<glm::mat4> mvList;
+
+    std::vector< glm::vec3 > refCameraPos;
+    std::vector< glm::vec3 > groundPlane;
 
 };
 

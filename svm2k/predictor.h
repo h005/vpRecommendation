@@ -20,6 +20,7 @@ public:
 
     void setImgFeatures(ImgSet *imgset);
     void setGeoFeatures(ViewPointSet *vpset);
+    void setImgGeoFeatures(ViewPointSet *vpset);
 
     void predictScoreWithViewId(cv::Mat &score, int viewId);
     void predictLabelWithViewId(cv::Mat &label, int viewId);

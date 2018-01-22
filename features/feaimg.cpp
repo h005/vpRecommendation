@@ -16,6 +16,11 @@ FeaImg::FeaImg(QString imgFile)
     img = cv::imread(imgFile.toStdString());
 }
 
+FeaImg::FeaImg(Mat &img)
+{
+    this->img = img;
+}
+
 void FeaImg::setFeatures()
 {
 //    setRuleOfThirds();
@@ -240,6 +245,15 @@ void FeaImg::setLSD_VanishLine()
     std::vector<cv::Point2d> vps;
     vps.clear();
     lsf->setVanishPoints(vps);
+
+    if(vps.size() < 3)
+    {
+        for(int i=0;i<lsd.size();i++)
+            fea.push_back(lsd[i]);
+        for(int i = 0;i < 3; i++)
+            fea.push_back(0.0);
+        return;
+    }
 
     std::vector<cv::Point2d> lines;
     lines.clear();

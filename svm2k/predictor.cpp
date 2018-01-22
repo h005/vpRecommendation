@@ -41,6 +41,14 @@ void Predictor::setGeoFeatures(ViewPointSet *vpset)
     feaNormalization(XTest2, geoFeaScale);
 }
 
+void Predictor::setImgGeoFeatures(ViewPointSet *vpset)
+{
+    vpset->copyGeoFeatureTo(XTest2);
+    feaNormalization(XTest2, geoFeaScale);
+    vpset->copyImgFeatureTo(XTest1);
+    feaNormalization(XTest1, imgFeaScale);
+}
+
 void Predictor::predictLabel(cv::Mat &label, int viewId)
 {
     assert(!(XTest1.rows % 2));

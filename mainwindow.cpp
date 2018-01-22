@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "svm2k/predictor.h"
-
+#include <QTime>
 #include <QDebug>
 
 QPlainTextEdit *messageWidget;
@@ -147,7 +147,7 @@ void MainWindow::on_importModel_clicked()
 {
     QString modelFile = QFileDialog::getOpenFileName(this,
                                              QString("Load 3D model"),
-                                             QString("/home/hejw005/Documents/learning/QtProject/vpRecommendation/data/models/"),
+                                             QString("/home/eye/Documents/vpDataSet/validMeshModel"),
                                              QString("Image Files(*.off *.obj)"),
                                              nullptr,
                                              QFileDialog::DontUseNativeDialog);
@@ -216,6 +216,8 @@ void MainWindow::imageQualityAssessment()
 
 void MainWindow::viewpointQualityAssessment(int knowAxis)
 {
+    QTime time;
+    time.start();
     if(!glWidget)
     {
         std::cout << "please input the model first" << std::endl;
@@ -223,19 +225,21 @@ void MainWindow::viewpointQualityAssessment(int knowAxis)
     }
     if(vpSet)
         delete vpSet;
-    vpSet = new ViewPointSet();
+    vpSet = new ViewPointSet(cameraLocations, groundPlane);
     vpSet->setFeatures(glWidget,knowAxis);
     Predictor *predictor = new Predictor();
     // set geo features ie 3D features ie XTest2
-    predictor->setGeoFeatures(vpSet);
+//    predictor->setGeoFeatures(vpSet);
+    predictor->setImgGeoFeatures(vpSet);
     cv::Mat score;
-    predictor->predictScoreWithViewId(score, Predictor::ViewId_Geo);
+    predictor->predictScoreWithViewId(score, Predictor::ViewId_ImgGeo);
 //    vpSet->setRecommendationLocations(score);
 
     vpSet->setRecommendationLocationsWithRatio(score);
     score.release();
     delete predictor;
 
+    std::cout << "vp recommendation elapsed time: " << (double)time.elapsed() / 1000.0 << " ms" << std::endl;
 }
 
 void MainWindow::setUpUiStyle()
@@ -281,20 +285,23 @@ void MainWindow::cleanVpSet()
 {
     if(glWidget)
     {
-        delete glWidget;
+//        there is a bug for memeroy leak
+//        delete glWidget;
         glWidget = NULL;
     }
+//    std::cout << "clean vp set glwidget" << std::endl;
     if(feaGeo)
     {
         delete feaGeo;
         feaGeo = NULL;
     }
-    if(vpSet)
-    {
-        delete vpSet;
-        vpSet = NULL;
-    }
-
+//    std::cout << "clean vp set feaGeo" << std::endl;
+//    if(vpSet)
+//    {
+//        delete vpSet;
+//        vpSet = NULL;
+//    }
+//    std::cout << "clean vp set vpSet" << std::endl;
 }
 
 void MainWindow::on_Clear_clicked()
@@ -348,26 +355,28 @@ void MainWindow::on_cleanLog_clicked()
     sfm->cleanLog();
 }
 
-void MainWindow::on_recommendKnowAxis_clicked()
-{
-    statusBar()->showMessage("busy");
-    statusBar()->repaint();
-    viewpointQualityAssessment(0);
-    statusBar()->showMessage("");
-}
+//void MainWindow::on_recommendKnowAxis_clicked()
+//{
+//    statusBar()->showMessage("busy");
+//    statusBar()->repaint();
+//    viewpointQualityAssessment(0);
+//    statusBar()->showMessage("");
+//}
 
 void MainWindow::on_loadCameras_clicked()
 {
     QString cameraFile = QFileDialog::getOpenFileName(this,
                                              QString("Load camera locations"),
-                                             QString("/home/hejw005/Documents/vpDataSet/nju/model/scene_dense_mesh_texture_simple.obj.mtl"),
-                                             QString("Image Files(*.list *.txt)"),
+                                             QString("/home/eye/Documents/vpDataSet/validMeshModel"),
+                                             QString("Image Files(*.lst)"),
                                              nullptr,
                                              QFileDialog::DontUseNativeDialog);
 
     std::fstream fs;
-    std::vector< glm::vec3 > cameraLocations;
     std::vector< glm::vec3 > recommendedCamerasLocations;
+
+    cameraLocations.clear();
+    groundPlane.clear();
 
 ///
 /// cameraLocations.list
@@ -395,7 +404,20 @@ void MainWindow::on_loadCameras_clicked()
         cameraLocations.push_back(pos);
     }
     fs.close();
-    fs.open("/home/hejw005/Documents/vpDataSet/nju/model/viewRecommendation.list");
+
+///
+/// plane.txt
+/// #NUM
+/// nx ny nz
+/// px py pz
+///
+
+    QString plane = cameraFile;
+    int ind = plane.lastIndexOf('/');
+    plane.replace(ind + 1, 30, QString("planeZ0.txt"));
+//    std::cout << plane.toStdString() << std::endl;
+    groundPlane.clear();
+    fs.open(plane.toStdString());
     fs >> NUM;
     for(int i=0;i<NUM;i++)
     {
@@ -406,7 +428,8 @@ void MainWindow::on_loadCameras_clicked()
         pos.y = tmp;
         fs >> tmp;
         pos.z = tmp;
-        recommendedCamerasLocations.push_back(pos);
+//        recommendedCamerasLocations.push_back(pos);
+        groundPlane.push_back(pos);
     }
     fs.close();
 
@@ -416,7 +439,22 @@ void MainWindow::on_loadCameras_clicked()
         return;
     }
     glWidget->setCamerasLocation(cameraLocations);
-    glWidget->setRecommendationCameraLocations(recommendedCamerasLocations);
+//    glWidget->setRecommendationCameraLocations(recommendedCamerasLocations);
 
-    std::cout << "camera postion loaded done" << std::endl;
+//    std::cout << "camera postion loaded done" << std::endl;
+}
+
+void MainWindow::on_showGround_clicked()
+{
+    if(glWidget)
+    {
+        QString groundModel = glWidget->getModelPath();
+        int ind = groundModel.lastIndexOf('/');
+        groundModel.replace(ind + 1, 30, QString("groundZ0.obj"));
+        std::cout << groundModel.toStdString() << std::endl;
+        glWidget->addModel(groundModel);
+        std::cout << "show ground done" << std::endl;
+    }
+    else
+        std::cout << "please load a model first" << std::endl;
 }

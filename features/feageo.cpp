@@ -1,4 +1,5 @@
 #include "feageo.h"
+#include "feaimg.h"
 #include <glm/gtx/string_cast.hpp>
 
 #include <QPlainTextEdit>
@@ -11,6 +12,7 @@ FeaGeo::FeaGeo(GLWidget *glWidget)
 
 void FeaGeo::vpRecommendPipLine(std::vector<glm::mat4> &cameraList,
                                 cv::Mat &geoFeature,
+                                cv::Mat &imgFeature,
                                 int knowAxis)
 {
     glm::mat4 originalMV;
@@ -20,7 +22,9 @@ void FeaGeo::vpRecommendPipLine(std::vector<glm::mat4> &cameraList,
         originalMV = glWidget->getNowMatrix();
     for(int i=0;i<cameraList.size();i++)
     {
-        initial(cameraList[i] * originalMV, glWidget->getProjMatrix());
+//        initial(cameraList[i] * originalMV, glWidget->getProjMatrix());
+        // 20180121 we sample the viewpoints based on the model without the scale and shift transpose
+        initial(cameraList[i], glWidget->getProjMatrix());
         if(!((i + 1) % 50))
         {
             messageWidget->appendPlainText("vpRecommendation sample points " + QString::number(i+1));
@@ -32,9 +36,13 @@ void FeaGeo::vpRecommendPipLine(std::vector<glm::mat4> &cameraList,
         setImgMask(img,mask);
         setParameters();
         extractFeatures();
-//        std::cout << "geofea size " << fea.size() << std::endl;
-//        std::cout << "vpRecommendation " << i << std::endl;
         fillInFeature(geoFeature,i);
+
+        // set image features
+        FeaImg *feaImg = new FeaImg(img);
+        feaImg->setFeatures();
+        feaImg->fillInMat(imgFeature, i);
+        delete feaImg;
     }
 }
 

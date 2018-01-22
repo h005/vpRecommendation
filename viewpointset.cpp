@@ -6,16 +6,31 @@
 
 ViewPointSet::ViewPointSet()
 {
+    refCameraPos.clear();
     sceneZ = -0.9;
-    N_sample = 500;
+    N_sample = 100;
     feaGeo = NULL;
     m_features = 18;
-    geoFeatures.create(N_sample,m_features,CV_64FC1);
+    geoFeatures.create(N_sample, m_features, CV_64FC1);
+    imgFeatures.create(N_sample, 9 + 3 + 960 + 14, CV_64FC1);
+}
+
+ViewPointSet::ViewPointSet(std::vector<glm::vec3> &refCameraPos, std::vector<glm::vec3> &groundPlane)
+{
+    this->refCameraPos = refCameraPos;
+    this->groundPlane = groundPlane;
+    N_sample = 100;
+    feaGeo = NULL;
+    m_features = 18;
+    geoFeatures.create(N_sample, m_features, CV_64FC1);
+    imgFeatures.create(N_sample, 9 + 3 + 960 + 14, CV_64FC1);
 }
 
 ViewPointSet::~ViewPointSet()
 {
-
+//    feaGeo = NULL;
+    geoFeatures.release();
+    imgFeatures.release();
 }
 
 void ViewPointSet::setViewpoints()
@@ -42,7 +57,12 @@ void ViewPointSet::setFeatures(GLWidget *glWidget, int knowAxis)
         }
     }
     setGLWidget(glWidget);
-    feaGeo->vpRecommendPipLine(mvList, geoFeatures, knowAxis);
+    feaGeo->vpRecommendPipLine(mvList, geoFeatures, imgFeatures, knowAxis);
+}
+
+void ViewPointSet::copyImgFeatureTo(cv::Mat &imgFea)
+{
+    imgFeatures.copyTo(imgFea);
 }
 
 void ViewPointSet::copyGeoFeatureTo(cv::Mat &geoFea)
@@ -66,11 +86,13 @@ void ViewPointSet::genMVMatrix(std::vector<glm::mat4> &mvList)
     for(int i=0;i<cameraPos.size();i++)
     {
         glm::mat4 mv = glm::lookAt(glm::vec3(cameraPos[i].x, cameraPos[i].y, cameraPos[i].z),
-                                   glm::vec3(0.f,0.f,0.f),
+                                   glm::vec3(0.f,0.f,0.5f),
                                    glm::vec3(0.f,0.f,1.f));
         mvList.push_back(mv);
     }
 }
+
+
 
 void ViewPointSet::camPosSample()
 {
@@ -102,7 +124,11 @@ void ViewPointSet::camPosSample()
     double r1 = 1.2;
     double r2 = 1.5;
     double pi = acos(-1.0);
-    double theta = pi / 3.0 * 2.0;
+    double theta = pi / 3.0 * 2.0 / 3.0;
+    double cameraZ = -0.4;
+    double shiftY = 0.0;
+    camPosSampleParameter(r1, r2, theta, cameraZ, shiftY);
+//    std::cout << "################## cameraZ ############ " << cameraZ << std::endl;
     double biasTheta = pi + pi / 2.0 - theta / 2.0;
     // area of the sector
     double areaSector = theta / 2.0 * (r2 * r2 - r1 * r1);
@@ -132,11 +158,68 @@ void ViewPointSet::camPosSample()
                 continue;
             // convert to polar coordinates
             tmpTheta = pi + acos( - tmpx / tmpR);
-//            std::cout << "[" << tmpx << ", "<< tmpy << "] tmpTheta " << tmpTheta << " [ " << biasTheta << ", " << biasTheta + theta << "]" << std::endl;
             if(tmpTheta >= biasTheta && tmpTheta <= biasTheta + theta)
-                cameraPos.push_back(glm::vec3(tmpx, tmpy, -0.4));
+            {
+                tmpy += shiftY;
+                // plane.point(:,3) = p(3) - ( n(1) * ( plane.point(:,1) - p(1) ) + n(2) * ( plane.point(:,2) - p(2) ) ) / n(3);
+                cameraZ = groundPlane[1].z - ( groundPlane[0].x * ( tmpx - groundPlane[1].x ) + groundPlane[0].y * ( tmpy - groundPlane[1].y ) ) / groundPlane[0].z;
+                cameraPos.push_back(glm::vec3(tmpx, tmpy, cameraZ));
+            }
         }
     std::cout << "total sample points "  << cameraPos.size() << std::endl;
+}
+
+void ViewPointSet::camPosSampleParameter(double &r1, double &r2, double &theta, double &cameraZ, double &shiftY)
+{
+    if(refCameraPos.size() == 0)
+    {
+        r1 = 1.2;
+        r2 = 1.5;
+        double pi = acos(-1.0);
+        theta = pi / 3.0 * 2.0;
+        cameraZ = -0.4;
+        return;
+    }
+    else
+    {
+        r1 = 1e8;
+        r2 = -1e8;
+        theta /= 2.0;
+        double r = 0;
+        double tmpTheta;
+        double maxTheta = 0;
+        glm::vec3 tmpThetaPos = refCameraPos[0];
+        cameraZ  = 0.0;
+        for(int i = 0; i < refCameraPos.size(); i++)
+        {
+            cameraZ += refCameraPos[i].z;
+            r = sqrt(refCameraPos[i].x * refCameraPos[i].x + refCameraPos[i].y * refCameraPos[i].y);
+            tmpTheta  = acos(- refCameraPos[i].y / r);
+            if( maxTheta < tmpTheta )
+            {
+                maxTheta = tmpTheta;
+                tmpThetaPos = refCameraPos[i];
+            }
+        }
+        double absX = tmpThetaPos.x > 0 ? tmpThetaPos.x : - tmpThetaPos.x;
+        shiftY = absX / tan(theta) - absX / tan(maxTheta);
+        if(shiftY < 0)
+        {
+            shiftY = 0;
+            return;
+        }
+//        r1 = sqrt(tmpR1Pos.x * tmpR1Pos.x + (tmpR1Pos.y - shiftY) * (tmpR1Pos.y - shiftY));
+//        r2 = sqrt(tmpR2Pos.x * tmpR2Pos.x + (tmpR2Pos.y - shiftY) * (tmpR2Pos.y - shiftY));
+        // compute the r1 and r2
+        for(int i=0; i < refCameraPos.size(); i++)
+        {
+            r = sqrt(refCameraPos[i].x * refCameraPos[i].x + (refCameraPos[i].y - shiftY) * (refCameraPos[i].y - shiftY));
+            r1 = r1 < r ? r1 : r;
+            r2 = r2 < r ? r : r2;
+        }
+        cameraZ /= refCameraPos.size();
+        return;
+    }
 }
 
 void ViewPointSet::fillInFeature(int index)
@@ -174,15 +257,17 @@ void ViewPointSet::setRecommendationLocations(cv::Mat &score)
 
 void ViewPointSet::setRecommendationLocationsWithRatio(cv::Mat &score)
 {
+    srand(12134);
     double sumRatio = 0.0;
 //    double ratioVal[9] = {0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1};
-    double ratioVal[3] = {0.3,0.2,0.1};
+//    double ratioVal[3] = {0.3,0.2,0.1};
+    double ratioVal[1] = {0.05};
     std::vector<double> ratio(ratioVal, ratioVal + sizeof(ratioVal) / sizeof(double));
     for(int i=0;i < ratio.size();i++)
         sumRatio += ratio[i];
     cv::Mat indexScore;
     cv::sortIdx(score, indexScore, CV_SORT_EVERY_COLUMN + CV_SORT_DESCENDING);
-    double topRate = 0.2;
+    double topRate = 0.05;
     int numsCamera = topRate * score.rows;
 
     std::vector<int> index;
@@ -190,12 +275,21 @@ void ViewPointSet::setRecommendationLocationsWithRatio(cv::Mat &score)
     {
         int base = indexPart * score.rows / ratio.size();
 //        std::cout << "base " << base << std::endl;
+        std::set<int> indexSet;
+        indexSet.clear();
+        std::set<int>::iterator it;
+        int num = numsCamera * ratio[indexPart] / sumRatio;
         for(int i = 0; i < numsCamera * ratio[indexPart] / sumRatio; i++)
         {
-//            int tmpIdx = rand()
-            int num = numsCamera * ratio[indexPart] / sumRatio;
             int tmpIdx = (float) rand() / (float) RAND_MAX * num;
-            index.push_back(indexScore.at<int>(tmpIdx + base, 0));
+            it = indexSet.find(tmpIdx);
+            if(it == indexSet.end())
+            {
+                indexSet.insert(tmpIdx);
+                index.push_back(indexScore.at<int>(tmpIdx + base, 0));
+            }
+            else
+                i--;
         }
     }
 
