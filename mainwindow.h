@@ -54,6 +54,10 @@ private slots:
 
     void on_showGround_clicked();
 
+    void on_saveImage_clicked();
+
+    void on_renderBatch_clicked();
+
 private:
     void imageQualityAssessment();
 
@@ -66,6 +70,10 @@ private:
     void cleanImgSet();
 
     void cleanVpSet();
+
+    void getFileList(QString path, QFileInfoList& fileInfoList);
+
+    void getFileList(QFileInfoList folderList, QFileInfoList &fileInfoList);
 
 private:
     Ui::MainWindow *ui;

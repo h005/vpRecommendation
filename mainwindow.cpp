@@ -3,6 +3,7 @@
 #include "svm2k/predictor.h"
 #include <QTime>
 #include <QDebug>
+#include <QStringList>
 
 QPlainTextEdit *messageWidget;
 
@@ -145,13 +146,14 @@ void MainWindow::on_assess_clicked()
 
 void MainWindow::on_importModel_clicked()
 {
-    QString modelFile = QFileDialog::getOpenFileName(this,
-                                             QString("Load 3D model"),
-                                             QString("/home/eye/Documents/vpDataSet/validMeshModel"),
-                                             QString("Image Files(*.off *.obj)"),
-                                             nullptr,
-                                             QFileDialog::DontUseNativeDialog);
+//    QString modelFile = QFileDialog::getOpenFileName(this,
+//                                             QString("Load 3D model"),
+//                                             QString("/home/eye/Documents/vpDataSet/validMeshModel"),
+//                                             QString("Image Files(*.off *.obj)"),
+//                                             nullptr,
+//                                             QFileDialog::DontUseNativeDialog);
 
+    QString modelFile = "/home/miracle/Documents/dataSet/facetune/femaleDataset5/faceData/test/bad/9/AF681_l.obj";
 //    qDebug() << "modelFile " << modelFile << endl;
     messageWidget->appendPlainText(modelFile + " loading");
 
@@ -172,6 +174,7 @@ void MainWindow::on_importModel_clicked()
     setGLWidget();
     messageWidget->appendPlainText(modelFile + " is loaded");
     statusBar()->showMessage(modelFile + " is loaded");
+
 }
 
 void MainWindow::on_recommend_clicked()
@@ -286,7 +289,7 @@ void MainWindow::cleanVpSet()
     if(glWidget)
     {
 //        there is a bug for memeroy leak
-//        delete glWidget;
+        delete glWidget;
         glWidget = NULL;
     }
 //    std::cout << "clean vp set glwidget" << std::endl;
@@ -301,7 +304,41 @@ void MainWindow::cleanVpSet()
 //        delete vpSet;
 //        vpSet = NULL;
 //    }
-//    std::cout << "clean vp set vpSet" << std::endl;
+    //    std::cout << "clean vp set vpSet" << std::endl;
+}
+
+void MainWindow::getFileList(QString path, QFileInfoList &fileInfoList)
+{
+    QDir dir(path);
+    // get folders
+    dir.setFilter(QDir::Hidden | QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
+
+    QFileInfoList folderList = dir.entryInfoList();
+//    for(int i = 0; i < folderList.size(); ++i)
+//    {
+//        QFileInfo fileInfo = folderList.at(i);
+//        qDebug() << fileInfo.fileName() << endl;
+//    }
+    // get files
+    QStringList filters;
+    filters << QString("*.jpg") << QString("*.png");
+    dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    dir.setNameFilters(filters);
+    QFileInfoList fileList = dir.entryInfoList();
+    fileInfoList.append(fileList);
+//    for(int i = 0; i < fileList.size(); ++i)
+//    {
+//        QFileInfo fileInfo = fileList.at(i);
+//        qDebug() << fileList.at(i).absoluteFilePath() << endl;
+////        qDebug() << fileList.at(i) << endl;
+//    }
+    getFileList(folderList, fileInfoList);
+}
+
+void MainWindow::getFileList(QFileInfoList folderList, QFileInfoList &fileInfoList)
+{
+    for(int i=0; i < folderList.size(); i++)
+        getFileList(folderList.at(i).absoluteFilePath(), fileInfoList);
 }
 
 void MainWindow::on_Clear_clicked()
@@ -448,13 +485,61 @@ void MainWindow::on_showGround_clicked()
 {
     if(glWidget)
     {
-        QString groundModel = glWidget->getModelPath();
-        int ind = groundModel.lastIndexOf('/');
-        groundModel.replace(ind + 1, 30, QString("groundZ0.obj"));
-        std::cout << groundModel.toStdString() << std::endl;
-        glWidget->addModel(groundModel);
-        std::cout << "show ground done" << std::endl;
+        cv::Mat img;
+        cv::Mat mask;
+        glWidget->setImgMask(img, mask);
+        cv::namedWindow("depthImg");
+        cv::imshow("depthImg", mask);
+        cv::waitKey(0);
+        cv::namedWindow("rgbImg");
+        cv::imshow("rgbImg", img);
+        cv::waitKey(0);
+
+//        QString groundModel = glWidget->getModelPath();
+//        int ind = groundModel.lastIndexOf('/');
+//        groundModel.replace(ind + 1, 30, QString("groundZ0.obj"));
+//        std::cout << groundModel.toStdString() << std::endl;
+//        glWidget->addModel(groundModel);
+//        std::cout << "show ground done" << std::endl;
     }
     else
         std::cout << "please load a model first" << std::endl;
+}
+
+void MainWindow::on_saveImage_clicked()
+{
+    if(glWidget)
+    {
+        cv::Mat img;
+        glWidget->setRetangleMaskImage(img);
+        cv::imwrite("/home/miracle/Documents/result.png", img);
+        std::cout << "save image to ~/Documents/result.png" << std::endl;
+//        cv::Mat img;
+//        cv::Mat mask;
+//        glWidget->setImgMask(img, mask);
+//        cv::namedWindow("depthImg");
+//        cv::imshow("depthImg", mask);
+//        cv::waitKey(0);
+//        cv::namedWindow("rgbImg");
+//        cv::imshow("rgbImg", img);
+//        cv::waitKey(0);
+    }
+    else
+        std::cout << "please load a model first" << std::endl;
+}
+
+void MainWindow::on_renderBatch_clicked()
+{
+    std::vector<std::string> model_list;
+
+    QString base_path = "/home/miracle/Documents/dataSet/facetune/femaleDataset5/faceData/test";
+    QFileInfoList fileInfoList;
+    fileInfoList.clear();
+    getFileList(base_path, fileInfoList);
+    for(int i=0; i < fileInfoList.size(); i++)
+    {
+        QFileInfo fileinfo = fileInfoList.at(i);
+        qDebug() << i << " " << fileinfo.absoluteFilePath() << endl;
+    }
+
 }
