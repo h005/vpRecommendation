@@ -61,15 +61,15 @@ GLWidget::GLWidget(const QString &modelPath, QWidget *parent)
 {
     this->modelPath = modelPath;
     model.load(modelPath.toLocal8Bit().data());
-    cameraModelPos.load("./camera/pin1_1.obj");
-    cameraModelNeg.load("./camera/pin1_2.obj");
+    cameraModelPos.load("./model/pin1.obj");
+    cameraModelNeg.load("./model/pin2.obj");
     std::pair<GLfloat, glm::mat4> scaleAndShift = model.recommandScaleAndShift();
     m_scaleBeforeRender = scaleAndShift.first;
     m_shiftBeforeRender = scaleAndShift.second;
     cameraPos = glm::vec3(0.f,0.f,0.f);
     flag_move = false;
 //    camPosLength = 50000.f;
-    camPosLength = 3.f;
+    camPosLength = 2.f;
     rate = 0.02;
 //    std::cout << "glwidget initial ... " << std::endl;
 //    m_relation = new PointsMatchRelation("1.txt");
@@ -85,6 +85,15 @@ void GLWidget::addModel(QString &modelPathAdded)
     extraModel.bindDataToGL();
     doneCurrent();
     extraModelFlag = 1;
+}
+
+void GLWidget::loadModel(QString modelPath)
+{
+    model.cleanUp();
+    model.load(modelPath.toStdString().c_str());
+    makeCurrent();
+    model.bindDataToGL();
+    doneCurrent();
 }
 
 GLWidget::~GLWidget()
@@ -136,6 +145,46 @@ void GLWidget::cleanup()
     std::cout << "cleanup done" << std::endl;
 }
 
+void GLWidget::settingBoundingBox(cv::Mat& img, cv::Mat& mask, std::vector<int>& boundingBox)
+{
+//    cv::namedWindow("depthImg");
+//    cv::imshow("depthImg", mask);
+//    cv::waitKey(0);
+    boundingBox.clear();
+    int mid_row = mask.rows / 2;
+    int mid_col = mask.cols / 2;
+//    std::cout << "channels " << mask.channels() << std::endl;
+    // up line
+    for(int i = 0; i < mask.rows; i++)
+        if(mask.at<uchar>(i, mid_col) != 255)
+        {
+            boundingBox.push_back(i);
+            break;
+        }
+    // bottom line
+    for(int i = mask.rows - 1; i >= 0; i--)
+        if(mask.at<uchar>(i, mid_col) != 255)
+        {
+            boundingBox.push_back(i);
+            break;
+        }
+    // left line
+    for(int i = 0; i < mask.cols; i++)
+        if(mask.at<uchar>(mid_row, i) != 255)
+        {
+            boundingBox.push_back(i);
+            break;
+        }
+    // right line
+    for(int i = mask.cols - 1; i >= 0; i--)
+        if(mask.at<uchar>(mid_row, i) != 255)
+        {
+            boundingBox.push_back(i);
+            break;
+        }
+    return;
+}
+
 void GLWidget::initializeGL()
 {
     // http://stackoverflow.com/a/8303331
@@ -182,7 +231,12 @@ void GLWidget::paintGL()
     // 默认开启背面剔除:GL_CULL_FACE
 
     // 计算modelView矩阵
-    glm::mat4 modelViewMatrix = m_camera * getModelMatrix();
+
+    glm::vec3 axis(1.0, 0.0, 0.0);
+//    glm::radians(180.0)
+    glm::mat4 rotateMatrix = glm::rotate(glm::mat4(1.f), float(glm::radians(180.0)), axis);
+    glm::mat4 modelViewMatrix = m_camera * rotateMatrix * getModelMatrix();
+//    glm::mat4 modelViewMatrix = m_camera * getModelMatrix();
 
 
     // 绘制模型
@@ -324,9 +378,6 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-
-
-
 int GLWidget::addPoint(const QPoint &p) {
     makeCurrent();
 
@@ -442,6 +493,21 @@ void GLWidget::setImgMask(cv::Mat &img, cv::Mat &mask)
 
     delete p_img;
     delete p_rgbImg;
+}
+
+void GLWidget::setRetangleMaskImage(cv::Mat &rectImg)
+{
+    cv::Mat img;
+    cv::Mat mask;
+    std::vector<int> boundingBox;
+    this->setImgMask(img, mask);
+    this->settingBoundingBox(img, mask, boundingBox);
+    cv::Rect rect = cv::Rect(boundingBox[2], boundingBox[0], boundingBox[3] - boundingBox[2] + 1, boundingBox[1] - boundingBox[0] + 1);
+//    cv::Mat rectImg(boundingBox[1] - boundingBox[0] + 1, boundingBox[3] - boundingBox[2] + 1, CV_8UC3, cv::Scalar::all(3));
+    img(rect).copyTo(rectImg);
+//    cv::namedWindow("rectImg");
+//    cv::imshow("rectImg", rectImg);
+//    cv::waitKey(0);
 }
 
 void GLWidget::setVpRecommendationMatrix(glm::mat4 &vpRecommendationMatrix)

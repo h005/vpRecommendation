@@ -102,12 +102,13 @@ INCLUDEPATH += /usr/local/include \
                 /usr/local/include/opencv \
                 /usr/local/include/opencv2 \
 
-LIBS +=     /usr/local/lib/libopencv_core.so.3.2 \
-            /usr/local/lib/libopencv_highgui.so.3.2 \
-            /usr/local/lib/libopencv_imgcodecs.so.3.2 \
-            /usr/local/lib/libopencv_imgproc.so.3.2 \
-            /usr/local/lib/libopencv_objdetect.so.3.2 \
-            /usr/local/lib/libopencv_saliency.so.3.2 \
+LIBS +=     /usr/local/lib/libopencv_world.so
+#            /usr/local/lib/libopencv_core.so.3.4 \
+#            /usr/local/lib/libopencv_highgui.so.3.4 \
+#            /usr/local/lib/libopencv_imgcodecs.so.3.4 \
+#            /usr/local/lib/libopencv_imgproc.so.3.4 \
+#            /usr/local/lib/libopencv_objdetect.so.3.4 \
+#            /usr/local/lib/libopencv_saliency.so.3.4 \
 
 RESOURCES += \
     svm2kdata.qrc

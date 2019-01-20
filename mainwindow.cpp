@@ -321,7 +321,8 @@ void MainWindow::getFileList(QString path, QFileInfoList &fileInfoList)
 //    }
     // get files
     QStringList filters;
-    filters << QString("*.jpg") << QString("*.png");
+//    filters << QString("*.jpg") << QString("*.png");
+    filters << QString("*.obj");
     dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
     dir.setNameFilters(filters);
     QFileInfoList fileList = dir.entryInfoList();
@@ -339,6 +340,19 @@ void MainWindow::getFileList(QFileInfoList folderList, QFileInfoList &fileInfoLi
 {
     for(int i=0; i < folderList.size(); i++)
         getFileList(folderList.at(i).absoluteFilePath(), fileInfoList);
+}
+
+void MainWindow::saveImage(QString output_path)
+{
+    if(glWidget)
+    {
+        cv::Mat img;
+        glWidget->setRetangleMaskImage(img);
+        cv::imwrite(output_path.toStdString(), img);
+        std::cout << "save image to " << output_path.toStdString() << std::endl;
+    }
+    else
+        std::cout << "please load a model first" << std::endl;
 }
 
 void MainWindow::on_Clear_clicked()
@@ -536,10 +550,15 @@ void MainWindow::on_renderBatch_clicked()
     QFileInfoList fileInfoList;
     fileInfoList.clear();
     getFileList(base_path, fileInfoList);
+
     for(int i=0; i < fileInfoList.size(); i++)
     {
         QFileInfo fileinfo = fileInfoList.at(i);
-        qDebug() << i << " " << fileinfo.absoluteFilePath() << endl;
+        qDebug() << i << " / " << fileInfoList.size() << " " << fileinfo.absoluteFilePath() << endl;
+        // import model
+        glWidget->loadModel(fileinfo.absoluteFilePath());
+        glWidget->repaint();
+        saveImage(fileinfo.absolutePath() + fileinfo.baseName() + "render_.png");
     }
-
+    std::cout << "render done" << std::endl;
 }

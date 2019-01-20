@@ -40,60 +40,60 @@ void FeaImg::fillInMat(Mat &featureMat, int index)
 
 void FeaImg::setRuleOfThirds()
 {
-    float res = 100000.0;
-    double centroidRow = 0;
-    double centroidCol = 0;
-//    setCentroid();
-    // abstract saliency mask
-    std::string algorithm[2] = {"SPECTRAL_RESIDUAL","BING"};
-    Saliency::create(algorithm[0]);
-    Ptr<Saliency> saliencyAlgorithm = Saliency::create(algorithm[0]);
-    if( saliencyAlgorithm == NULL)
-    {
-        cout << "***Error in the instantiation of the saliency algorithm...***\n";
-        return ;
-    }
+//    float res = 100000.0;
+//    double centroidRow = 0;
+//    double centroidCol = 0;
+////    setCentroid();
+//    // abstract saliency mask
+//    std::string algorithm[2] = {"SPECTRAL_RESIDUAL","BING"};
+//    Saliency::create(algorithm[0]);
+//    Ptr<Saliency> saliencyAlgorithm = Saliency::create(algorithm[0]);
+//    if( saliencyAlgorithm == NULL)
+//    {
+//        cout << "***Error in the instantiation of the saliency algorithm...***\n";
+//        return ;
+//    }
 
-    cv::Mat binaryMap;
-//    cv::Mat src = cv::imread(imgFile.toStdString());
-//    cv::resize(src,src,cv::Size(480,320));
+//    cv::Mat binaryMap;
+////    cv::Mat src = cv::imread(imgFile.toStdString());
+////    cv::resize(src,src,cv::Size(480,320));
 
-    if(algorithm[0].find("SPECTRAL_RESIDUAL") == 0)
-    {
-        cv::Mat saliencyMap;
-        if(saliencyAlgorithm->computeSaliency(img, saliencyMap))
-        {
-            StaticSaliencySpectralResidual spec;
-            spec.computeBinaryMap(saliencyMap, binaryMap);
-            // binaryMap is a mat with one channel and uchar type for element.
-//            qDebug() << "channels " << binaryMap.channels() << endl;
-//            channels = 1
-//            cv::imshow( "Saliency Map", saliencyMap );
-//            cv::imshow( "Original Image", src );
-//            cv::imshow( "Binary Map", binaryMap );
-//            cv::waitKey( 0 );
-            setCentroid(centroidRow, centroidCol, binaryMap);
-            double ruleOfThirdRow[2] = {1.0/3.0,2.0/3.0};
-            double ruleOfThirdCol[2] = {1.0/3.0,2.0/3.0};
+//    if(algorithm[0].find("SPECTRAL_RESIDUAL") == 0)
+//    {
+//        cv::Mat saliencyMap;
+//        if(saliencyAlgorithm->computeSaliency(img, saliencyMap))
+//        {
+//            StaticSaliencySpectralResidual spec;
+//            spec.computeBinaryMap(saliencyMap, binaryMap);
+//            // binaryMap is a mat with one channel and uchar type for element.
+////            qDebug() << "channels " << binaryMap.channels() << endl;
+////            channels = 1
+////            cv::imshow( "Saliency Map", saliencyMap );
+////            cv::imshow( "Original Image", src );
+////            cv::imshow( "Binary Map", binaryMap );
+////            cv::waitKey( 0 );
+//            setCentroid(centroidRow, centroidCol, binaryMap);
+//            double ruleOfThirdRow[2] = {1.0/3.0,2.0/3.0};
+//            double ruleOfThirdCol[2] = {1.0/3.0,2.0/3.0};
 
-            for(int i=0;i<2;i++)
-                for(int j=0;j<2;j++)
-                {
-                    double tmp = sqrt((centroidRow - ruleOfThirdRow[i])*(centroidRow - ruleOfThirdRow[i])
-                                      +(centroidCol - ruleOfThirdCol[j])*(centroidCol - ruleOfThirdCol[j]));
-                    res = res < tmp ? res : tmp;
-                }
+//            for(int i=0;i<2;i++)
+//                for(int j=0;j<2;j++)
+//                {
+//                    double tmp = sqrt((centroidRow - ruleOfThirdRow[i])*(centroidRow - ruleOfThirdRow[i])
+//                                      +(centroidCol - ruleOfThirdCol[j])*(centroidCol - ruleOfThirdCol[j]));
+//                    res = res < tmp ? res : tmp;
+//                }
 
-        }
-        else
-            res = 100000.0;
-    }
-    else
-    {
-        cout << "***Error in the instantiation of the saliency algorithm...***\n";
-        return ;
-    }
-    fea.push_back(res);
+//        }
+//        else
+//            res = 100000.0;
+//    }
+//    else
+//    {
+//        cout << "***Error in the instantiation of the saliency algorithm...***\n";
+//        return ;
+//    }
+//    fea.push_back(res);
 }
 
 ///

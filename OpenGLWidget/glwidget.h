@@ -58,6 +58,7 @@ class GLWidget : public DragableWidget
 public:
     GLWidget(const QString &modelPath, QWidget *parent = 0);
     void addModel(QString &modelPathAdded);
+    void loadModel(QString modelPath);
     ~GLWidget();
 
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
@@ -71,6 +72,8 @@ public:
     // img is the render result for the given MVP matrix
     // mask is the mask of the render result
     void setImgMask(cv::Mat &img, cv::Mat &mask);
+
+    void setRetangleMaskImage(cv::Mat &img);
 
     void setVpRecommendationMatrix(glm::mat4 &vpRecommendationMatrix);
 
@@ -107,6 +110,7 @@ public:
 
 private:
     void cleanup();
+    void settingBoundingBox(cv::Mat& img, cv::Mat& mask, std::vector<int>& boundingBox);
 
 signals:
 

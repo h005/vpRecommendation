@@ -75,6 +75,8 @@ private:
 
     void getFileList(QFileInfoList folderList, QFileInfoList &fileInfoList);
 
+    void saveImage(QString output_path);
+
 private:
     Ui::MainWindow *ui;
     QGridLayout *mainWidgetLayout;
