@@ -96,6 +96,20 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="saveImage">
+        <property name="text">
+         <string>save Image</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="renderBatch">
+        <property name="text">
+         <string>render Batch</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="Line" name="line_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
